@@ -1,0 +1,14 @@
+@use '../../sass/variables' as gv;
+
+.overlayCard {
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+    background-color:gv.$white;
+    min-width: 20vw;
+    min-height: 20vh;
+    z-index:99999;
+    border-radius: 1.4rem;
+    padding: 1.6rem;
+}

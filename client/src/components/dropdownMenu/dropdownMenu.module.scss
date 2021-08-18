@@ -1,0 +1,49 @@
+@use '../../sass/variables' as gv;
+
+.dropdown {
+    position: relative;
+    &__input {
+        all: unset;
+        border: 1px solid gv.$yellow-50;
+        border-radius: 1.4rem;
+        width: 100%;
+        padding: 0.2rem;
+        &::placeholder {
+            font-size: 1.35rem;
+            position: relative;
+            left:1.5rem;
+        }
+    }
+    &__icon {
+        position: absolute;
+        right: 0.5rem;
+        top: 0.6rem;
+        fill: gv.$yellow-50;
+        cursor: pointer;
+    }
+    &__wrapper {
+        height: 0;
+        overflow: hidden;
+        transition: height 0.5s ease-in-out;
+    }
+    &__list {
+    width: 92%;
+    position: relative;
+    left: 1.4rem;
+    border:1px solid gv.$yellow-50;
+    border-bottom-left-radius: 1.4rem;
+    border-bottom-right-radius: 1.4rem;
+    overflow: hidden;
+    li {
+        padding: 0.5rem 0.8rem;
+        color: #333;
+        cursor: pointer;
+        &:not(:last-of-type) {
+            border-bottom:1px dashed gv.$yellow-50;
+        }
+        &:hover {
+            background-color: gv.$yellow-50;
+        }
+    }
+    }
+}

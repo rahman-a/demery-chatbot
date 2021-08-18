@@ -1,0 +1,78 @@
+@use '../../sass/variables' as gv;
+
+.login {
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    text-align: center;
+    &__logo {
+        color:gv.$yellow-50;
+        fill:gv.$yellow-50;
+    }
+    &__form {
+        display: flex;
+        flex-direction: column;
+        margin-top: 2rem;
+        background-color:gv.$white;
+        border:1px solid gv.$yellow-50;
+        border-radius: 1.6rem;
+        min-width:35vw;
+        min-height: 35vh;
+        padding: 4rem 8rem;
+    }
+    &__formGroup {
+        margin-bottom: 2.5rem;
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+        input {
+            all:unset;
+            border:1px solid gv.$yellow-50;
+            padding: 0.3rem;
+            &::placeholder {
+                font-weight: 300;
+                font-size:1.3rem;
+                color:rgb(184, 184, 184);
+            }
+        }
+    }
+    &__label {
+        margin-bottom: 1.5rem;
+        font-style: italic;
+        font-weight: 300;
+    }
+    &__btn {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        button {
+            all:unset;
+            color:rgb(66, 66, 230);
+            font-size: 1.3rem;
+            font-weight: 300;
+            cursor: pointer;
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+    &__submit {
+        all:unset;
+        width:15.1rem;
+        padding:1rem;
+        border:1px solid gv.$yellow-50;
+        cursor: pointer;
+        margin-right: 2rem;
+        font-size:1.4rem;
+        font-weight: 300;
+        &:hover {
+            background-color: rgba(gv.$yellow-50, 0.1);
+        }
+    }
+    &__header {
+        font-size: 3rem;
+        font-weight: 200;
+        letter-spacing: 5px;
+    }
+}

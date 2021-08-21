@@ -16,7 +16,8 @@ import ChatBlock from './chat-block'
 import HourGlass from './hour-glass'
 import ChatStats from './chat-stats'
 import Searching from './searching'
-
+import EyeOpen from './eye-open'
+import EyeClose from './eye-close'
 
 const Icons = props => {
     switch(props.name.toLowerCase()) {
@@ -54,6 +55,10 @@ const Icons = props => {
             return <ChatStats {...props}/>
         case 'searching':
             return <Searching {...props}/>
+        case 'eye-open':
+            return <EyeOpen {...props}/>
+        case 'eye-close':
+            return <EyeClose {...props}/>
         default:
             return ''
     }

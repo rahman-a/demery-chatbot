@@ -1,0 +1,32 @@
+@use '../../sass/variables' as gv;
+
+.info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 3rem;
+    border-bottom: 1px solid rgba(gv.$light-black,0.1);
+    padding-bottom: 0.2rem;
+    position: relative;
+    &__label {
+        font-size: 1.7rem;
+        font-weight: 300;
+        width: clamp(8rem, 12rem, 15rem);
+    }
+    &__data {
+        font-size: 1.5rem;
+        font-weight: 300;
+        border: unset;
+        background-color: unset;
+        text-align: start;
+    }
+    &__edit {
+        all:unset;
+        cursor: pointer;
+        font-weight: 300;
+        font-size: 1.4rem;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}

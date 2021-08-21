@@ -4,6 +4,12 @@
     height: 7rem;
     background-color: gv.$white;
     padding-top:1rem;
+    &__ham {
+        position: absolute;
+        left: 1rem;
+        top: 2rem;
+        cursor: pointer;
+    }
     &__wrapper {
         display: flex;
         align-items: center;

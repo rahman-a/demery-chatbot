@@ -1,7 +1,10 @@
 import React, {useRef} from 'react'
 import style from './navbar.module.scss'
 import Icon from '../icons'
-const Navbar = () => {
+import ChannelDropMenu from '../channelDropMenu'
+import channels from '../../data/channels'
+
+const Navbar = ({dashboard}) => {
     const listRef = useRef(null)
     // eslint-disable-next-line no-script-url
     const url = 'javascript:void(0)'
@@ -14,16 +17,19 @@ const Navbar = () => {
     }
     return (
         <div className={style.navbar}>
+            {dashboard && <Icon name='ham-menu' width='50' height='50' className={style.navbar__ham}/>}
             <div className='container'>
                 <div className={style.navbar__wrapper}>
                     <div className={style.navbar__logo}>
                         <Icon className={style.navbar__icon} name='chatbot'/>
                     </div>
                     <div className={style.navbar__search}>
-                        <form>
+                        { dashboard 
+                        ? <ChannelDropMenu channels={channels} activeChannelId={1}/>
+                        :<form>
                             <input type="text" name='search'/>
                             <button type="submit" onClick={(e) => e.preventDefault()}>search</button>
-                        </form>
+                        </form>}
                     </div>
                     <div className={style.navbar__avatar}>
                         <img src="image/avatar.png" alt="avatar" onClick={toggleList}/>

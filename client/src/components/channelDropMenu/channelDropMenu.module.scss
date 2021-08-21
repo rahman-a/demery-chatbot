@@ -1,0 +1,55 @@
+@use '../../sass/variables' as gv;
+
+.channelDropMenu {
+    direction: rtl;
+    position: relative;
+    &__input {
+        display: flex;
+        align-items: center;
+        border: 1px solid gv.$yellow-50;
+        position: relative;
+        border-radius: 1.6rem;
+        padding: 0.3rem;
+        width: 30rem;
+    }
+    &__img {
+        width:3rem;
+        height: 3rem;
+        border-radius: 50%;
+    }
+    &__title {
+        margin-right:1.6rem
+    }
+    &__icon {
+        width:2rem;
+        height: 2rem;
+        fill:gv.$yellow-50;
+        position: absolute;
+        left: 1.5rem;
+        cursor: pointer;
+    }
+    &__wrapper {
+        position: absolute;
+        width: 27rem;
+        right: 1.4rem;
+        height:0;
+        overflow: hidden;
+        transition: all 0.3s ease-in-out;
+    }
+    &__list {
+        border: 1px solid gv.$yellow-50;
+        border-bottom-left-radius: 1.6rem;
+        border-bottom-right-radius: 1.6rem;
+        overflow: hidden;
+    }
+    &__item {
+        display: flex;
+        align-items: center;
+        padding:0.5rem 0;
+        cursor: pointer;
+        &:hover {
+            background-color: gv.$yellow-50;
+        }
+    }
+
+}

@@ -18,6 +18,7 @@ import ChatStats from './chat-stats'
 import Searching from './searching'
 import EyeOpen from './eye-open'
 import EyeClose from './eye-close'
+import HamMenu from './hamMenu'
 
 const Icons = props => {
     switch(props.name.toLowerCase()) {
@@ -59,6 +60,8 @@ const Icons = props => {
             return <EyeOpen {...props}/>
         case 'eye-close':
             return <EyeClose {...props}/>
+        case 'ham-menu':
+            return <HamMenu {...props}/>
         default:
             return ''
     }

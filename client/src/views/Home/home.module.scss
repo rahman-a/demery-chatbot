@@ -1,0 +1,29 @@
+@use '../../sass/variables' as gv;
+
+.home {
+    &__action {
+        margin: 5rem 0 0 0;
+        &_btn {
+            all:unset;
+            width:18rem;
+            padding:1rem;
+            border: 1px dashed gv.$yellow-50;
+            border-radius: 1.6rem;
+            text-align: center;
+            font-size: 1.5rem;
+            color:gv.$light-black;
+            margin-right:3rem;
+            cursor: pointer;
+            &:hover {
+                background-color: gv.$yellow-50;
+            }
+        }
+    }
+    &__channels {
+        display: flex;
+        align-items: center;
+        gap:2rem;
+        flex-wrap: wrap;
+        margin-top: 4rem;
+    }
+}

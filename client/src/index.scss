@@ -1,5 +1,4 @@
 @use 'sass/variables' as gv;
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;1,100;1,300;1,500&display=swap');
 
 
 
@@ -16,12 +15,15 @@ html {
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: gv.$main-font;
     font-size: 1.6rem;
     line-height: 1.6;
     background-color: gv.$light-gray;
 }
-
+.container {
+    width:80%;
+    margin:0 auto;
+}
 ul {
     list-style: none;
 }

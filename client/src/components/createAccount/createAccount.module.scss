@@ -1,0 +1,63 @@
+@use '../../sass/variables' as gv;
+
+.account {
+    &__form {
+        padding:3rem;
+        font-family: gv.$second-font;
+        display: flex;
+    }
+    &__block {
+        &:not(:last-of-type){
+            margin-right: 2rem;
+        }
+    }
+    &__formGroup {
+        width:25rem;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 2rem;
+        label {
+            margin-bottom: 1.6rem;
+        }
+        input, textarea {
+            all:unset;
+            width:100%;
+            border:1px solid gv.$yellow-50;
+            direction: rtl;
+            padding:0.5rem;
+            border-radius: 1.6rem;
+            box-sizing: border-box;
+            &::placeholder {
+                font-size:1.4rem ;
+            }
+            &[type=file] {
+                display:none;
+            }
+        }
+        
+        button {
+            all:unset;
+            width:15rem;
+            text-align: center;
+            border:1px solid gv.$yellow-50;
+            border-radius: 1.6rem;
+            padding: 0.5rem;
+            cursor: pointer;
+            &:hover {
+                background-color: rgba(gv.$yellow-50, 0.1);
+            }
+        }
+    }
+    &__photo {
+        font-size: 1.4rem;
+        border: 1px dashed gv.$yellow-50;
+        border-radius: 1.6rem;
+        padding: 1rem;
+        transform: translateY(4rem);
+        text-align: center;
+        cursor: pointer;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 3.5rem !important;
+    }
+}

@@ -9,12 +9,13 @@
     min-height: 20vh;
     z-index:99999;
     border-radius: 1.4rem;
-    padding: 1.6rem;
     transition: all 0.5s ease-in-out;
     &__close {
         cursor: pointer;
         fill:gv.$yellow-50;
         position: absolute;
         right:1.6rem;
+        top:1.6rem;
+        z-index: 99999;
     }
 }

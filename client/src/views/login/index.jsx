@@ -1,7 +1,7 @@
 import React,{useState} from 'react'
 import style from './login.module.scss'
-import {OverlayBg} from '../../components/overlayBG'
-import {OverlayCard} from '../../components/overlayCard'
+import {Overlay} from '../../components/overlay'
+import {Modal} from '../../components/Modal'
 import Icon from '../../components/icons'
 
 const Login = () => {
@@ -20,8 +20,8 @@ const Login = () => {
     }
     return (
         <>
-        <OverlayBg toggle={forgetPassword}/>
-        <OverlayCard toggle={forgetPassword} closeHandler={() => resetForgetPassword(false)}>
+        <Overlay toggle={forgetPassword}/>
+        <Modal toggle={forgetPassword} closeHandler={() => resetForgetPassword(false)}>
             <div className={style.login__formGroup} style={{display:'flex'}}>
                 <label htmlFor="email" className={style.login__label}>Enter your E-mail Address</label>
                 <input onChange={({target:{value}}) => setEmail(value)} 
@@ -34,7 +34,7 @@ const Login = () => {
                 <button style={{marginTop:'2rem', textAlign:'center', borderRadius:'1.6rem'}} className={style.login__submit} onClick={resetPasswordHandler}>Send</button>
             </div>
             <p style={{color:'#656565', fontWeight:'300'}}>The Reset Link will be sent to your E-mail within two hours and it will be valid for only 24hrs</p>
-        </OverlayCard>
+        </Modal>
         <div className={style.login}>
             <div className={style.login__logo}>
                 <Icon name='chatbot' width="70" height='70' className={style.login__icon}/>

@@ -1,12 +1,12 @@
 import React from 'react'
-import style from './overlayCard.module.scss'
+import style from './Modal.module.scss'
 import Icon from '../icons'
 
-export const OverlayCard = ({children, toggle, closeHandler}) => {
+export const Modal = ({children, toggle, closeHandler}) => {
 
 return (
      
-    <div style={{top: toggle ? '50%': '-50%' }} className={style.overlayCard}>
+    <div style={{top: toggle ? '50%': '-50%', opacity:toggle ? '1':'0'}} className={style.overlayCard}>
         <span className={style.close}>
             <Icon name='close-square' 
             width='20' 

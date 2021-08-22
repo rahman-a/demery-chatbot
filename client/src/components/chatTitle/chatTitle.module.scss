@@ -1,0 +1,34 @@
+@use '../../sass/variables' as gv;
+
+.chatTitle {
+    width: 28rem;
+    margin: 2rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid gv.$yellow-50;
+    border-radius: 1.6rem;
+    padding: 0.2rem 0.5rem;   
+    font-size: 1.4rem;
+    font-weight: 300;
+    transition: all 0.3s ease-in-out;
+    cursor:move;
+    &:hover {
+        background-color: rgba(gv.$yellow-50, 0.5);
+    }
+    &:hover svg{
+        fill:gv.$light-gray;
+    }
+    &__type {
+        font-size: 1.2rem;
+    }
+    &__edit, &__delete {
+        margin-left:1rem;
+        cursor: pointer;
+        svg {
+            width:1.2rem;
+            height: 1.2rem;
+            fill: gv.$yellow-50;
+        }
+    }
+}

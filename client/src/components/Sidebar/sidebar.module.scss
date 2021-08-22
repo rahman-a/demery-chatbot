@@ -1,0 +1,50 @@
+@use '../../sass/variables' as gv;
+
+.sidebar {
+    display: flex;
+    min-height: 100vh;
+    &__nav {
+        padding:1rem;
+        width:fit-content;
+        background-color: gv.$white;
+    }
+    
+    &__block {
+        margin-bottom: 1.6rem;
+        cursor: pointer;
+        padding:0.5rem;
+        transition: all 0.3s ease-in-out;
+        border:1px solid transparent;
+        &:hover {
+            border:1px solid gv.$yellow-50;
+        }
+    }
+    &__icon {
+        width:3.5rem;
+        height:3.5rem;
+        fill:gv.$yellow-50;
+    }
+    &__title {
+        background-color: gv.$white;
+        width:0;
+        overflow: hidden;
+        position: absolute;
+        height: 100vh;
+        left: 6rem;
+        transition: all 0.5s ease-in-out;
+        box-shadow: 0.3rem -0.6rem 0.9rem -0.6rem rgb(0,0,0,0.2);
+        z-index:999;
+    }
+    &__name {
+        margin-bottom: 3.3rem;
+        margin-top: 2rem;
+        height: 3.5rem;
+        padding:0.2rem 0.5rem;
+        transition: all 0.2s ease-in-out;
+        opacity:0;
+        cursor: pointer;
+        &:hover{
+            background-color: gv.$yellow-50;
+        }
+    }
+}

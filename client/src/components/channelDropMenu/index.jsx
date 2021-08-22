@@ -26,8 +26,8 @@ const ChannelDropMenu = ({channels, activeChannelId}) => {
             </div>
             <div className={style.channelDropMenu__wrapper} ref={wrapperRef}>
                 <ul className={style.channelDropMenu__list} ref={listRef}>
-                    {nonActiveChannels.map(ch => {
-                        return <li className={style.channelDropMenu__item}>
+                    {nonActiveChannels.map((ch, idx) => {
+                        return <li key={idx} className={style.channelDropMenu__item}>
                             <img className={style.channelDropMenu__img} src={ch.image} alt="channel" />
                             <p className={style.channelDropMenu__title}>{`قناة ${ch.name}`}</p>
                         </li>

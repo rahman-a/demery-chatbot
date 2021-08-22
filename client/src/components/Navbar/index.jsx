@@ -4,7 +4,7 @@ import Icon from '../icons'
 import ChannelDropMenu from '../channelDropMenu'
 import channels from '../../data/channels'
 
-const Navbar = ({dashboard}) => {
+const Navbar = ({dashboard, toggleHandler}) => {
     const listRef = useRef(null)
     // eslint-disable-next-line no-script-url
     const url = 'javascript:void(0)'
@@ -17,7 +17,10 @@ const Navbar = ({dashboard}) => {
     }
     return (
         <div className={style.navbar}>
-            {dashboard && <Icon name='ham-menu' width='50' height='50' className={style.navbar__ham}/>}
+            {dashboard 
+            && <span onClick={toggleHandler}>
+                <Icon name='ham-menu' width='50' height='50' className={style.navbar__ham}/>
+            </span>}
             <div className='container'>
                 <div className={style.navbar__wrapper}>
                     <div className={style.navbar__logo}>

@@ -7,7 +7,8 @@
         border: 1px solid gv.$yellow-50;
         border-radius: 1.4rem;
         width: 100%;
-        padding: 0.2rem;
+        padding: 0.2rem 1rem;
+        cursor: default;
         &::placeholder {
             font-size: 1.35rem;
             position: relative;
@@ -16,15 +17,18 @@
     }
     &__icon {
         position: absolute;
-        right: 0.5rem;
-        top: 0.6rem;
+        right: -1.2rem;
+        top: 0.8rem;
         fill: gv.$yellow-50;
         cursor: pointer;
     }
     &__wrapper {
         height: 0;
         overflow: hidden;
-        transition: height 0.5s ease-in-out;
+        transition: height 0.3s ease-in-out;
+        position: absolute;
+        z-index: 999999;
+        width: 100%;
     }
     &__list {
     width: 92%;
@@ -34,6 +38,8 @@
     border-bottom-left-radius: 1.4rem;
     border-bottom-right-radius: 1.4rem;
     overflow: hidden;
+    background-color: gv.$white;
+    font-size: 1.4rem;
     li {
         padding: 0.5rem 0.8rem;
         color: #333;

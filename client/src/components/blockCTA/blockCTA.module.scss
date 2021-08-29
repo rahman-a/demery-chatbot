@@ -1,0 +1,133 @@
+@use '../../sass/variables' as gv;
+
+.cta {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    input {
+        all: unset;
+        border: 1px solid gv.$yellow-50;
+        border-radius: 1.6rem;
+        padding: 0.5rem;
+        text-align: center;
+        font-size: 1.4rem;
+        font-weight: 300;
+        margin-right: 0.5rem;
+        cursor: text;
+    }
+    &__action {
+        position: relative;
+        &_btn {
+            margin-right: 0.5rem;
+            cursor: pointer;
+            svg {
+                width:1.5rem;
+                height: 1.5rem;
+                fill:gv.$yellow-50;
+            }
+        }
+    }
+    &__panel {
+        position: absolute;
+        top: -16rem;
+        left: -8rem;
+        width: 14rem;
+        border: 1px solid gv.$yellow-50;
+        border-radius: 1.6rem;
+        background-color: gv.$white;
+        overflow: hidden;
+        display: none;
+        li {
+            padding: 0.5rem;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: 300;
+            &:not(:last-of-type){
+                border-bottom: 1px dashed gv.$yellow-50;
+            }
+            &:hover {
+                background-color: rgba(gv.$yellow-50, 0.4);
+            }
+        }
+    }
+    &__call {
+        position: absolute;
+        top: -4.5rem;
+        left: -13rem;
+        background-color: gv.$white;
+        display: none;
+    }
+    &__done {
+        display: none;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.8);
+        transition: all 0.3s ease-in-out;
+        cursor: initial !important;
+        &:hover {
+            background-color:  rgba(0,0,0,0.8) !important;
+        }
+        p {
+            color:gv.$white;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+        svg {
+            fill:gv.$white;
+            width:2.5rem;
+            height: 2.5rem;
+        }
+    }
+    &__blocks {
+        ul {
+            font-size: 1.2rem;
+            width:96%;
+            left:0;
+            border-radius: unset;
+        }
+       input {
+           font-size: 1.2rem;
+           padding:0.3rem;
+           text-align: start;
+           border-radius: unset;
+       }
+       svg {
+        right: -15px;
+        top: 4px;
+        transform: rotate(30deg);
+        width: 2.3rem;
+        height: 2.5rem;
+       }
+    }
+    &__input {
+        display: flex;
+        input {
+            all: unset;
+            border: 1px solid gv.$yellow-50;
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: 300;
+            cursor: text;
+        }
+        button {
+            all: unset;
+            background-color: gv.$yellow-50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 0 0.2rem;
+        }
+        svg {
+            width:1.5rem;
+            height: 2rem;
+            fill:gv.$white
+        }
+    }
+}

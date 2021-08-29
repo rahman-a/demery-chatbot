@@ -34,4 +34,19 @@
             }
         }
     }
+    &__order {
+        all: unset;
+        font-size: 1.3rem;
+        border: 1px dashed gv.$yellow-50;
+        padding: 0.1rem 1rem;
+        border-radius: .4rem;
+        color: gv.$yellow-50;
+        float: right;
+        margin: 0 1rem 1rem 0;
+        cursor: pointer;
+        visibility: hidden;
+        &:hover {
+            background-color: rgba(gv.$yellow-50, 0.1);
+        }
+    }
 }

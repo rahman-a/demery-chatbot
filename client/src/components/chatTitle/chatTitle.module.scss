@@ -31,4 +31,22 @@
             fill: gv.$yellow-50;
         }
     }
+    &__drag {
+        position: relative;
+        background-color:gv.$white;
+        color:rgba(gv.$light-black, 0.5);
+        border:1px dashed gv.$yellow-50;
+        &:hover {
+            background-color: gv.$white;
+        }
+        // svg {
+        //     fill:rgba(gv.$light-black, 0.5) !important;
+
+        // }
+        & > p,
+        & > span, 
+        & > div {
+            visibility: hidden;
+        }
+    }
 }

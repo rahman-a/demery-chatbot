@@ -19,6 +19,7 @@ import Searching from './searching'
 import EyeOpen from './eye-open'
 import EyeClose from './eye-close'
 import HamMenu from './hamMenu'
+import CheckMark from './check-mark'
 
 const Icons = props => {
     switch(props.name.toLowerCase()) {
@@ -62,6 +63,8 @@ const Icons = props => {
             return <EyeClose {...props}/>
         case 'ham-menu':
             return <HamMenu {...props}/>
+        case 'check-mark':
+            return <CheckMark {...props}/>
         default:
             return ''
     }

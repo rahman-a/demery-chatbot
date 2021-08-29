@@ -1,0 +1,98 @@
+@use '../../sass/variables' as gv;
+
+.chatCanvas {
+    min-height: 100vh;
+    flex-grow: 1;
+    &__create {
+        display: flex;
+        margin: 2rem;
+        li {
+            background-color: gv.$white;
+            border:1px dashed gv.$yellow-50;
+            color:gv.$light-black;
+            margin-right: 1rem;
+            padding: 0.2rem 1rem;
+            cursor: pointer;
+            &:hover {
+                border: 1px solid gv.$yellow-50;
+                background-color: gv.$yellow-50;
+            }
+        }
+    }
+    &__btn {
+        all: unset;
+        align-self: flex-start;
+        margin-left: 3rem;
+        width: 15rem;
+        border: 1px solid gv.$yellow-50;
+        padding: 0.5rem 1rem;
+        border-radius: 1.6rem;
+        font-size: 1.3rem;
+        text-align: center;
+        cursor: pointer;
+        &:hover {
+            background-color: rgba(gv.$yellow-50, 0.2);
+        }
+    }
+    &__blocks {
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        min-height: 100vh;
+    }
+
+    &__gallery{
+        margin-left: 1.6rem;
+        input {
+            all: unset;
+            width:30rem;
+            border: 1px solid gv.$yellow-50;
+            border-radius: 1.6rem;
+            font-size: 1.4rem;
+            padding: 0.2rem 1rem;
+            font-weight: 300;
+        }
+    }
+
+    &__clear {
+        position: absolute;
+        right: 2rem;
+        top: 9.5rem;
+        button {
+            all: unset;
+            outline: 1px dashed #970404;
+            outline-offset: 2px;
+            padding: 0.2rem 0.5rem;
+            cursor: pointer;
+            color: #970404;
+            background-color: gv.$white;
+            font-size: 1.2rem;
+            transform: translate(0,0) scale(1);
+            transition: all 0.2s ease;
+            &:active {
+                transform:translate(0, 2px) scale(0.98)
+            }
+        }
+        &:hover button {
+            background-color: #970404;
+            outline:1px solid #970404;
+            color:gv.$white;
+        }
+        
+    }
+    &__chat {
+        position: absolute;
+        bottom:2rem;
+        right:4rem;
+        z-index:9999999;
+        span {
+            cursor: pointer;
+        }
+        svg {
+            width:5rem;
+            height: 5rem;
+            fill: gv.$yellow-50;
+        }
+    }
+}

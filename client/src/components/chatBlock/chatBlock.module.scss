@@ -1,0 +1,207 @@
+@use '../../sass/variables' as gv;
+
+.chatBlock {
+    position: absolute;
+    width: 34rem;
+    margin: 2rem;
+    border: 1px solid #eee;
+    padding: 1rem;
+    box-shadow: 0px 1px 1px -1px rgb(0 0 0 / 50%);
+    border-radius: 0.5rem;
+    cursor: move;
+    background-color: gv.$light-gray;
+    &__content {
+        border: 1px solid gv.$yellow-50;
+        border-radius: 1.6rem;
+    }
+    &__message {
+        width:80%;
+        input {
+            all: unset;
+            width: 100%;
+            padding: 0.5rem 1rem;
+            border: 1px solid gv.$yellow-50;
+            border-radius: 1.6rem;
+            font-size: 1.4rem;
+            font-weight: 300;
+            cursor: text;
+        }
+    }
+    &__name {
+        width:100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        input {
+            all:unset;
+            width:60%;
+            padding:0.2rem 1rem;
+            border:1px solid gv.$yellow-50;
+            border-radius: 1.6rem;
+            font-size: 1.4rem;
+            font-weight: 300;
+            cursor: text;
+        }
+    }
+    &__done {
+        all: unset;
+        border: 1px solid gv.$yellow-50;
+        padding: 0.3rem 0.5rem;
+        border-radius: 1.6rem;
+        width: 8rem;
+        text-align: center;
+        cursor: pointer;
+        font-size: 1.4rem;
+        font-weight: 300;
+        &:hover {
+            background-color: rgba(gv.$yellow-50, 0.2);
+        }
+    }
+    &__block {
+        display: flex;
+        margin-top:1rem
+    }
+    &__avatar {
+        margin: 1rem 1rem 0 0;
+        position: relative;
+    }
+
+    &__img {
+        position: relative;
+        height: 13rem;
+        overflow: hidden;
+        border-top-left-radius: 1.4rem;
+        border-top-right-radius: 1.4rem;
+        img {
+           width:100%;
+           height: 100%;
+        }
+    }
+    &__upload {
+        label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            font-size: 1.4rem;
+            color: rgba(gv.$light-black, 0.5);
+            font-weight: 300;
+        }
+        input {
+            display: none;
+        }
+    }
+    &__title {
+        margin: 0.5rem 0;
+        input {
+            all: unset;
+            font-size: 1.4rem;
+            font-weight: 300;
+            width:100%;
+            padding: 0 1rem;
+            box-sizing: border-box;
+            cursor: text;
+            &::placeholder {
+                color:rgba(gv.$light-black, 0.5) 
+            }
+            &:focus {
+                outline: 1px solid gv.$yellow-50;
+            }
+        }
+    }
+    &__desc {
+        textarea {
+            all:unset;
+            padding:0 1rem;
+            font-size: 1.3rem;
+            font-weight: 300;
+            word-break: break-all;
+            width: 100%;
+            box-sizing: border-box;
+            cursor: text;
+            &::placeholder {
+                color:rgba(gv.$light-black, 0.5) 
+            }
+            &:focus {
+                outline: 1px solid gv.$yellow-50;
+            }
+        }
+        
+    }
+
+    &__btns{
+        margin:0 0.5rem 1rem 1rem;
+    }
+    &__lang {
+        all: unset;
+        position: absolute;
+        top: 5rem;
+        left: 0;
+        cursor: pointer;
+        font-size: 2rem;
+        font-weight: 100;
+    }
+    &__change_lang {
+        & input,
+        & textarea {
+            direction: rtl;
+        }
+    }
+    &__remove {
+        cursor: pointer;
+        position: absolute;
+        top:10rem;
+        left:0;
+        svg {
+            width:2rem;
+            height: 2rem;
+            fill:rgba(gv.$light-black, 0.5)
+        }
+    }
+    &__msg {
+        padding-bottom: 1.5rem;
+        button {
+            top:3rem;
+            left:6rem;
+            font-size: 1.6rem;
+        }
+
+        span {
+            top:3.2rem;
+            left:10rem;
+            svg {
+                width:1.6rem;
+                height: 1.6rem;
+            }
+        }
+    }
+    &__order {
+        border: 1px solid gv.$yellow-50;
+        padding: 0.2rem;
+        border-radius: 1rem;
+        width: 6rem;
+        text-align: center;
+        font-size: 1.4rem;
+        font-weight: 300;
+        color:gv.$light-black
+    }
+    &__alert {
+        position: absolute;
+        height: 4rem;
+        width: 100%;
+        top: -4rem;
+        left:0;
+        visibility: hidden;
+        background-color: rgb(254 233 233 / 92%);
+        z-index: 9999;
+        border-radius: 1.4rem;
+        display: grid;
+        place-items: center;
+        color: #620404;
+        transition: all 0.5s ease-in-out;
+    }
+}

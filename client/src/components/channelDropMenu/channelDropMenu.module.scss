@@ -41,11 +41,14 @@
         border-bottom-left-radius: 1.6rem;
         border-bottom-right-radius: 1.6rem;
         overflow: hidden;
+        background-color: gv.$white;
+        position: relative;
+        z-index: 999999;
     }
     &__item {
         display: flex;
         align-items: center;
-        padding:0.5rem 0;
+        padding:0.5rem;
         cursor: pointer;
         &:hover {
             background-color: gv.$yellow-50;

@@ -5,11 +5,27 @@ import Icon from '../icons'
 import ObjectID  from 'bson-objectid'
 import {useDrag} from 'react-use-gesture'
 import {useChatOpsDispatch} from '../../context/blockOps'
-import {CHAT_OPS_CREATE, CHAT_OPS_ADD_GALLERY_BLOCK, CHAT_BLOCK_CREATE} from '../../context/actionTypes'
+import {
+    CHAT_OPS_CREATE, 
+    CHAT_OPS_ADD_GALLERY_BLOCK, 
+    CHAT_BLOCK_CREATE,
+    CHAT_OPS_RESET
+} from '../../context/actionTypes'
 import {useBlockDispatch} from '../../context/blockData'
 import BlockAlert from '../blockAlert'
 
-const ChatBlock = ({blocks, idx, deleteHandler,data, type}) => {
+const ChatBlock = ({
+    blocks, 
+    idx, 
+    deleteHandler,
+    data, 
+    type,
+    collectGalleryData,
+    setCollectGalleryData,
+    galleryName,
+    setGalleryName,
+    blockId
+}) => {
     const [blockData, setBlockData] = useState({
         name:'',
         image:'',
@@ -23,6 +39,7 @@ const ChatBlock = ({blocks, idx, deleteHandler,data, type}) => {
     const [isAR, setIsAR] = useState(true)
     const [alert, setAlert] = useState('')
     const [imageSRC, setImageSRC] = useState('image/preview.png')
+    const [saveGBlock, setSaveGBlock] = useState(false)
     const dispatch = useChatOpsDispatch()
     const blockDispatch = useBlockDispatch()
     const moveChatBlock = useDrag(params => {
@@ -43,9 +60,13 @@ const ChatBlock = ({blocks, idx, deleteHandler,data, type}) => {
     }
 
     const createNextBlockHandler = _ => {
-        blocks.find(block => block.buttons) 
-        ? dispatch({type:CHAT_OPS_ADD_GALLERY_BLOCK, payload:{_id:ObjectID().toHexString(), type:'Gallery'}})
-        : dispatch({type:CHAT_OPS_CREATE, payload:{_id:ObjectID().toHexString(), type:'Gallery'}})
+        if(!saveGBlock) {
+            blocks.find(block => block.buttons) 
+            ? dispatch({type:CHAT_OPS_ADD_GALLERY_BLOCK, payload:{_id:ObjectID().toHexString(), type:'Gallery'}})
+            : dispatch({type:CHAT_OPS_CREATE, payload:{_id:ObjectID().toHexString(), type:'Gallery'}})
+        }else {
+            setAlert(isAR ?'اضغط على حفظ اولا قبل الضغط على التالى' : 'click save first before click next')
+        }
     }
 
     const addNewCTA = _ => {
@@ -62,8 +83,13 @@ const ChatBlock = ({blocks, idx, deleteHandler,data, type}) => {
     }
 
     const getBlockDataHandler = e => {
+            setSaveGBlock(true)
             if(e.target.files){
-                setImageSRC(URL.createObjectURL(e.target.files[0]))
+                try {
+                    setImageSRC(URL.createObjectURL(e.target.files[0]))  
+                } catch (error) {
+                    setAlert(isAR ? 'حدث خطأ ما من فضلك حاول مجددا' : 'something happened please try again')
+                }
                 // const image = e.target.files[0]
                 const image = URL.createObjectURL(e.target.files[0])
                 setBlockData({...blockData,image})
@@ -73,7 +99,49 @@ const ChatBlock = ({blocks, idx, deleteHandler,data, type}) => {
             }
         }
 
-    const saveBlockDataHandler = _ => {  
+
+    const saveGalleryBlockHandler = _ => {
+        const chatData = collectBlockDataHandler()
+        if(chatData){
+            const chatBlockGalleryData = collectGalleryData.filter(block => block._id !== chatData._id)
+            setCollectGalleryData([...chatBlockGalleryData, chatData])
+            setSaveGBlock(false) 
+        }
+    }
+
+    const saveBlockDataHandler = _ => {
+        const chatData = collectBlockDataHandler()
+        if(chatData) {
+            if(type === 'Gallery') {
+                if(!galleryName) {
+                    setAlert(isAR ?'من فضلك اكتب اسم الجاليرى' : 'please write the gallery name')
+                    return
+                }
+                if(!saveGBlock) {
+                    const galleryData = {
+                        _id:blockId ? blockId :ObjectID().toHexString(),
+                        type:'Gallery',
+                        name:galleryName,
+                        abbr:'GL',
+                        gallery:collectGalleryData
+                    }
+                    blockDispatch({type:CHAT_BLOCK_CREATE, payload:galleryData})
+                    setCollectGalleryData([])
+                    dispatch({type:CHAT_OPS_RESET})
+                    setGalleryName('')
+                }else {
+                    setAlert(isAR ?'اضغط على حفظ اولا قبل الضغط على تم' : 'click save first before click done')
+                }
+            }else {
+                console.log('save Block', chatData);
+                blockDispatch({type:CHAT_BLOCK_CREATE, payload:chatData})
+                deleteHandler(undefined ,chatData._id)
+            }
+        }
+        
+    }
+
+    const collectBlockDataHandler = _ => { 
         const allAbbr = {
             Text:'TX',
             Card:'CD',
@@ -83,7 +151,7 @@ const ChatBlock = ({blocks, idx, deleteHandler,data, type}) => {
         const chatData =  {
             ...blockData,
             buttons:actionBtns,
-            _id: blockData._id ? blockData._id : ObjectID().toHexString(),
+            _id: blockData._id ? blockData._id : data._id,
             type,
             abbr:allAbbr[type]
         }
@@ -96,14 +164,13 @@ const ChatBlock = ({blocks, idx, deleteHandler,data, type}) => {
                     }
                     break;
                 case 'Card':
+                case 'Gallery':
                     if(key !== 'title' && chatData[key] === ''){
                         key === 'image' 
                         ? setAlert(`please upload an image`) 
                         :setAlert(`please fill the ${key} input`)
                         return
                     }
-                    break;
-                case 'Gallery':
                     break;
                 default:
                     break;
@@ -114,9 +181,7 @@ const ChatBlock = ({blocks, idx, deleteHandler,data, type}) => {
             setAlert(`please create at least one button`)
             return
         }
-        console.log('save Block', chatData);
-        blockDispatch({type:CHAT_BLOCK_CREATE, payload:chatData})
-        deleteHandler(undefined ,chatData._id)
+        return chatData
     }
 
     useEffect(() => {
@@ -125,8 +190,8 @@ const ChatBlock = ({blocks, idx, deleteHandler,data, type}) => {
             setActionBtns(data.buttons)
             setBlockData(data)
         }
-    },[data,blocks])
-    
+    },[data,blocks,galleryName])
+
     
     return (
         <>
@@ -137,7 +202,7 @@ const ChatBlock = ({blocks, idx, deleteHandler,data, type}) => {
             top:blockPos.y > - 20 ? blockPos.y : -20,
             left:blockPos.x > - 15 ? blockPos.x : -15
         }}>
-            <BlockAlert alert={alert} setAlert={setAlert}/>
+           <BlockAlert alert={alert} setAlert={setAlert}/>
            <div className={style.chatBlock__name} >
                <input 
                type="text" 
@@ -145,7 +210,7 @@ const ChatBlock = ({blocks, idx, deleteHandler,data, type}) => {
                placeholder={isAR ?'أكتب اسم البلوك هنا':'write the block name'} 
                defaultValue={data ? data.name : ''}
                onChange={(e) => getBlockDataHandler(e)}/>
-               
+
                {data.type === 'Gallery' 
                && !(idx === blocks.length - 1) 
                && <span 
@@ -185,6 +250,14 @@ const ChatBlock = ({blocks, idx, deleteHandler,data, type}) => {
                    <span className={style.chatBlock__remove} onClick={(e) => deleteHandler(e)}>
                        <Icon name='trash'/>
                    </span>
+                   { data.type === 'Gallery' 
+                    && saveGBlock &&
+                        <button 
+                        className={style.chatBlock__save}
+                        onClick={saveGalleryBlockHandler}>
+                            {isAR ? 'حفظ':'Save'}
+                        </button>
+                    }
                </figure>
 
                {data.type === 'Text' 
@@ -237,7 +310,8 @@ const ChatBlock = ({blocks, idx, deleteHandler,data, type}) => {
                         removeCTAHandler={removeCTA} 
                         addCTAHandler={addNewCTA}
                         getButtonsData={setActionBtns}
-                        buttonsData={actionBtns}/>)
+                        buttonsData={actionBtns}
+                        setSaveGBlock={setSaveGBlock}/>)
                        }
                    </div>
                </div>}

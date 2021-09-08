@@ -2,21 +2,30 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import morgan from 'morgan'
+import helmet from 'helmet'
+import cookieParser from 'cookie-parser'
+import connectDB from './src/dbConnection.js'
+import {notFound, errorHandler} from './src/middleware/errorHandler.js'
+import writerRouter from './src/routers/writerRouter.js' 
+import {fileURLToPath} from 'url'
+import path from 'path' 
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url)) 
 
 const app = express()
 dotenv.config()
+connectDB()
 app.use(cors())
 app.use(express.json())
 app.use(morgan('dev'))
+app.use(helmet())
+app.use(cookieParser())
+app.use('/api/writers', writerRouter)
+app.use('/api/uploads', express.static(path.resolve(__dirname, './uploads')))
+app.use(notFound)
+app.use(errorHandler)
 
-app.get('/', (req, res) => {
-    res.send({
-        message:'Server is Running',
-        state:"active"
-    })
-})
-
-app.listen(5000, () => {
-    console.log('server is up and running at port 5000');
+const port = process.env.PORT || 5000
+app.listen(port, () => {
+    console.log(`server is up and running at port ${port}`);
 })

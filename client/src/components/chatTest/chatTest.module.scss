@@ -1,7 +1,7 @@
 @use '../../sass/variables' as gv;
 
 .test {
-    position: absolute;
+    position: fixed;
     right: 2rem;
     width: 35.5rem;
     height: 50.5rem;
@@ -9,6 +9,7 @@
     border-radius: 1.6rem;
     transition: all 0.8s ease-in-out;
     box-shadow: 0px -1px 10px -5px rgb(0 0 0 / 50%);
+    z-index:9999;
     &__header {
         display: flex;
         justify-content: space-between;
@@ -61,12 +62,12 @@
         height: 6rem;
         border-bottom-left-radius: 1.5rem;
         border-bottom-right-radius: 1.5rem;
-        border-top: 2px solid gv.$yellow-50;
+        border-top: 1px solid gv.$yellow-50;
         z-index: 999999;
         input {
             all: unset;
             position: relative;
-            top:-1rem;
+            top:0;
             width: 85%;
             height: 4rem;
             padding: 0.2rem 1rem;
@@ -77,7 +78,7 @@
         span {
             cursor: pointer;
             position: relative;
-            top: -0.8rem;
+            top: 0;
             left: -1.5rem;
         }
         svg {

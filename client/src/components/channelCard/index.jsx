@@ -3,6 +3,7 @@ import style from './channelCard.module.scss'
 import {Overlay} from '../overlay'
 import {Modal} from '../Modal'
 import {WithContext as ReactTag} from 'react-tag-input'
+import {useHistory} from 'react-router-dom'
 
 const keyCode = {
     enter: 13
@@ -13,6 +14,7 @@ const delimiters = [keyCode.enter]
 const ChannelCard = ({data}) => {
     const [toggle, setToggle] = useState(false)
     const [tags, setTags] = useState([])
+    const history = useHistory()
     const suggestions = []
     
     const handleSubmit = e => {
@@ -38,7 +40,7 @@ const ChannelCard = ({data}) => {
     return (
         <>
         <Overlay toggle={toggle}/>
-        <Modal toggle={toggle} closeHandler={() => setToggle(false)}>
+        <Modal toggle={toggle} closeHandler={() => setToggle(false)} center>
             <div className={style.channel__edit}>
                 <form className={style.channel__form} onSubmit={handleSubmit}>
                     <div className={style.channel__formGroup}>
@@ -77,7 +79,7 @@ const ChannelCard = ({data}) => {
                 </div>
             </div>
         </Modal>
-        <div className={style.channel} onClick={() => console.log('Channel Clicked')}>
+        <div className={style.channel} onClick={() => history.push('/dashboard')}>
            <div className={style.channel__setting} onClick={(e) => toggleEditHandler(e)}>
                <span></span><span></span><span></span>
             </div> 

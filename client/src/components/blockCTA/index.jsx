@@ -13,6 +13,7 @@ const BlockCTS = ({
     isAR,
     getButtonsData,
     buttonsData,
+    setSaveGBlock,
     btnID}) => {
     const [panelToggle, setPanelToggle] = useState(false)
     const [isInputSent, setIsInputSent] = useState(false)
@@ -37,6 +38,8 @@ const BlockCTS = ({
     }
     const panelToggleHandler = (e,action) => {
         if(!btnTitle) return setAlert('Please write the button name')
+        setSaveGBlock(true)
+        setAction('')
         if(action === 'action') {
             setActionType(e.target.innerText)
             doneRef.current.style.display = 'flex'
@@ -62,38 +65,29 @@ const BlockCTS = ({
             }
         }
     }
-    const sendActionHandler = useCallback(id => {
-        if(!action && !id) return setAlert('Please provide the action')
+    const sendActionHandler = useCallback( id => {
+        if(!action && !btnTitle) return setAlert('Please provide the action')
         const filteredData = buttonsData.filter(btn => btn._id !== btnID)
-        if(id) {
-            if(actionType){
-                getButtonsData([...filteredData,{
-                    title:btnTitle,
-                    type:actionType,
-                    action:id,
-                    _id:btnID
-                }])  
-            } 
-        }else {
-            if(action && actionType) {
-                getButtonsData([...filteredData,{
-                    title:btnTitle,
-                    type:actionType,
-                    action:action,
-                    _id:btnID
-                }])
-                setIsInputSent(true)
-                setTimeout(() => {
-                    setIsInputSent(false)
-                }, 1000);
-            } 
+        setSaveGBlock(true)
+        if((action || id) && actionType) {
+            getButtonsData([...filteredData,{
+                title:btnTitle,
+                type:actionType,
+                action:action ? action : id,
+                _id:btnID
+            }])
+            setIsInputSent(true)
+            setTimeout(() => {
+                setIsInputSent(false)
+            }, 1000);
         } 
     
-    },[btnTitle,action, actionType])
+    },[action,actionType, btnTitle])
 
     const sendBtnData = useCallback( _ => {
         const filteredData = buttonsData.filter(btn => btn._id !== btnID)
         if(actionType === 'Subscribe' || actionType === 'Unsubscribe'){
+            setSaveGBlock(true)
             getButtonsData([...filteredData,{
                 title:btnTitle,
                 type:actionType,
@@ -103,11 +97,19 @@ const BlockCTS = ({
         } 
         },[actionType, btnTitle])
 
-    
+    const setIncomingDataForEdit = _ => {
+        if(buttonsData.length) {
+            setBtnTitle(buttonsData[blockIdx]?.title)
+            setActionType(buttonsData[blockIdx]?.type)
+            setAction(buttonsData[blockIdx]?.action)
+        }
+    }
     
     useEffect(() => {
         sendBtnData()
-    },[sendBtnData])
+        btnTitle && sendActionHandler()
+       !btnTitle && setIncomingDataForEdit()
+    },[sendBtnData, btnTitle])
 
     return (
         <div className={style.cta}>
@@ -154,6 +156,7 @@ const BlockCTS = ({
                             onClick={() => {
                                     setAction({name:block.name, _id:block._id})
                                     sendActionHandler(block._id)
+                                    setSaveGBlock(true)
                                 }}>
                                 {block.name}
                             </li>

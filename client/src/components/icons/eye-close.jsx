@@ -7,7 +7,7 @@ const EyeClose = ({width, height, className}) => {
         focusable="false" 
         data-prefix="far" 
         data-icon="eye-slash" 
-        class={`svg-inline--fa fa-eye-slash fa-w-20 ${className}`}
+        className={`svg-inline--fa fa-eye-slash fa-w-20 ${className}`}
         width={width}
         height={height}
         role="img" 

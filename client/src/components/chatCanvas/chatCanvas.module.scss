@@ -82,7 +82,7 @@
         
     }
     &__chat {
-        position: absolute;
+        position: fixed;
         bottom:2rem;
         right:4rem;
         z-index:9999999;

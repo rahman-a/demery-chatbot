@@ -1,19 +1,21 @@
-import React, {useRef} from 'react'
+import React, {useState} from 'react'
 import style from './navbar.module.scss'
 import Icon from '../icons'
 import ChannelDropMenu from '../channelDropMenu'
 import channels from '../../data/channels'
+import {Link, useHistory} from 'react-router-dom'
+import {useDispatch, useSelector} from 'react-redux'
+import {writerLogout} from '../../actions/writerAction'
+import Loader from '../Loader'
 
 const Navbar = ({dashboard, toggleHandler}) => {
-    const listRef = useRef(null)
-    // eslint-disable-next-line no-script-url
-    const url = 'javascript:void(0)'
-    const toggleList = _ => {
-        if(parseInt(listRef.current.style.opacity) === 0 || isNaN(parseInt(listRef.current.style.opacity))) {
-            listRef.current.style.opacity = '1'
-        }else {
-            listRef.current.style.opacity = 0 
-        }
+    const history = useHistory()
+    const dispatch = useDispatch()
+    const [toggle, setToggle] = useState(false)
+    const {loading, error} = useSelector(state => state.logout)
+    const {writer} = useSelector(state => state.info)
+    const logoutHandler = _ => {
+        dispatch(writerLogout())
     }
     return (
         <div className={style.navbar}>
@@ -23,7 +25,7 @@ const Navbar = ({dashboard, toggleHandler}) => {
             </span>}
             <div className='container'>
                 <div className={style.navbar__wrapper}>
-                    <div className={style.navbar__logo}>
+                    <div className={style.navbar__logo} onClick={() => history.push('/home')}>
                         <Icon className={style.navbar__icon} name='chatbot'/>
                     </div>
                     <div className={style.navbar__search}>
@@ -35,11 +37,20 @@ const Navbar = ({dashboard, toggleHandler}) => {
                         </form>}
                     </div>
                     <div className={style.navbar__avatar}>
-                        <img src="image/avatar.png" alt="avatar" onClick={toggleList}/>
-                        <ul className={style.navbar__list} ref={listRef}>
-                            <li><a href={url}>Profile</a></li>
-                            <li>Logout</li>
-                        </ul>
+                        <img 
+                        src={`/api/uploads/${writer.image}`} 
+                        alt="avatar" onClick={() => setToggle(!toggle)}/>
+                        {toggle && <ul className={style.navbar__list}>
+                            <li><Link to='/profile'>Profile</Link></li>
+                            {writer.isAdmin&&<li><Link to='/writers'>Writers</Link></li>}
+                            <li onClick={logoutHandler}> 
+                                {loading 
+                                ? <Loader/>
+                                : error 
+                                ? <span style={{color:'red'}}>{error}</span>
+                                :'Logout'}
+                            </li>
+                        </ul>}
                     </div>
                 </div>
             </div>

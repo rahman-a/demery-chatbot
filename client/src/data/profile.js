@@ -2,37 +2,36 @@ const profile = [
     {
         id:1,
         label:'User Name',
-        data:'ahm_90',
+        name:'userName',
         type:'text'
     },
     {
         id:2,
         label:'Full Name',
-        data:'Ahmed Abdelrahman',
+        name:'fullName',
         type:'text'
     },
     {
         id:3,
         label:'E-mail Address',
-        data:'user@test.com',
+        name:'email',
         type:'email'
     },
     {
         id:4,
         label:'Phone Number',
-        data:'021548962',
+        name:'phone',
         type:'tel'
     },
     {
         id:5,
         label:'Gender',
-        data:'Male',
+        name:'gender',
         type:'select'
     },
     {
         id:6,
         label:'Password',
-        data:'154789325',
         type:'password'
     },
 ]

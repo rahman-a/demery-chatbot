@@ -204,4 +204,21 @@
         color: #620404;
         transition: all 0.5s ease-in-out;
     }
+
+    &__save {
+        all:unset;
+        position: absolute;
+        top: 14rem;
+        width: 4rem;
+        left: -6px;
+        border:1px solid gv.$yellow-50;
+        text-align: center;
+        font-size: 1.4rem;
+        border-radius: 1rem;
+        padding: 0;
+        cursor: pointer;
+        &:hover {
+            background-color: rgba(gv.$yellow-50, 0.2);
+        }
+    }
 }

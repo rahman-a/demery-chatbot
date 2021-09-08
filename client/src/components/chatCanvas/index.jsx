@@ -9,6 +9,8 @@ import ChatTest from '../chatTest'
 
 const ChatCanvas = () => {
     const [galleryBlocks, setGalleryBlocks] = useState([])
+    const [collectGalleryData, setCollectGalleryData] = useState([])
+    const [galleryName, setGalleryName] = useState('')
     const [isChatBlock, setIsChatBlock] = useState(false)
     const {blockOps} = useChatOpsState()
     const dispatch = useChatOpsDispatch()
@@ -33,15 +35,26 @@ const ChatCanvas = () => {
             galleryBlocks.length 
             ? dispatch({type:CHAT_OPS_REMOVE_GALLERY_BLOCK, payload:id})  
             :dispatch({type:CHAT_OPS_DELETE, payload:id})
+            if(collectGalleryData.length) {
+                const newBlocks = collectGalleryData.filter(b => b._id !== id)
+                setCollectGalleryData(newBlocks)
+            }
         }
 
         const clearCanvasHandler = _ => {
             dispatch({type:CHAT_OPS_RESET})
+           setGalleryName('')
         }
 
 
     useEffect(() => {
-        blockOps && setGalleryBlocks(blockOps.filter(b => b.gallery?.length > 0))
+        if(blockOps) {
+            setGalleryBlocks(blockOps.filter(b => b.gallery?.length))
+            if(blockOps.length && blockOps[0].gallery) {
+                setCollectGalleryData(blockOps[0].gallery)
+                setGalleryName(blockOps[0].name)
+            }
+        }
     },[blockOps])
     return (
         <div className={style.chatCanvas}>
@@ -55,11 +68,12 @@ const ChatCanvas = () => {
                 <li onClick={(e) => createNewBlockHandler(e)}>Text</li>
                 <li onClick={(e) => createNewBlockHandler(e)}>Interactive</li>
                 <li onClick={(e) => createNewBlockHandler(e)}>Card</li>
-                <li style={{display:'none'}} onClick={(e) => createNewBlockHandler(e)}>Gallery</li>
+                <li onClick={(e) => createNewBlockHandler(e)}>Gallery</li>
             </ul>
             {(galleryBlocks.length > 0 || blockOps[0]?.type === 'Gallery') && <div className={style.chatCanvas__gallery}>
-                <input type="text"  
-                defaultValue={galleryBlocks.length ? galleryBlocks[0].name :''}
+                <input type="text" 
+                onChange={({target:{value}}) => setGalleryName(value)} 
+                defaultValue={galleryName}
                 placeholder='write the gallery title'/>
             </div>}
             <div className={style.chatCanvas__clear}>
@@ -74,18 +88,26 @@ const ChatCanvas = () => {
                         data={block}
                         idx = {idx}
                         type={block.type}
+                        galleryName={galleryName}
+                        setGalleryName={setGalleryName}
                         blocks={blockOps}
+                        setCollectGalleryData={setCollectGalleryData}
+                        collectGalleryData={collectGalleryData}
                         deleteHandler={(e) => deleteChatBlock(e, block._id)}/>
                     }) 
                     :blockOps && galleryBlocks.map((block) => {
                         return block.gallery.map((gal, idx) => {
                             return <ChatBlock
+                            blockId={block._id}
                             key={gal._id}
-                            name={block.name}
                             idx={idx}
                             data={gal}
                             type={block.type}
                             blocks={block.gallery}
+                            galleryName={galleryName}
+                            setGalleryName={setGalleryName}
+                            setCollectGalleryData={setCollectGalleryData}
+                            collectGalleryData={collectGalleryData}
                             deleteHandler={(e) => deleteChatBlock(e, gal._id)}
                             />
                         })

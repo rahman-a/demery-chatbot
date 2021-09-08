@@ -6,6 +6,7 @@ import ObjectID from 'bson-objectid'
 const ChatTest = ({toggle, setToggle}) => {
     const [dialogue, setDialogue] = useState([])
     const [content, setContent] = useState('')
+    
     const chatStyle = {
         bottom:toggle ? '8rem': '3rem',
         opacity:toggle ? '1': 0,

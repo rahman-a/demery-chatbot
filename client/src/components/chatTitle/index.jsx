@@ -36,7 +36,7 @@ const ChatTitle = ({data, dragStart, dragEnter, isDragging, dragBlock}) => {
         draggable
         >
             <span className={style.chatTitle__type}>{data.abbr}</span>
-            <p className={style.chatTitle__channel}>{data.name}</p>
+            <p style={{textAlign:'center'}} className={style.chatTitle__channel}>{data.name}</p>
             <div className={style.chatTitle__option}>
                 <span className={style.chatTitle__edit}  onClick={editTitleHandler}>
                     <Icon name='edit'/>

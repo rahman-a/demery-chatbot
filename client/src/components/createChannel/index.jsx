@@ -7,7 +7,7 @@ const CreateChannel = ({toggle, setToggle}) => {
     return (
         <>
          <Overlay toggle={toggle}/>
-         <Modal toggle={toggle} closeHandler={() => setToggle(false)}>
+         <Modal toggle={toggle} closeHandler={() => setToggle(false)} center>
             <div className={style.create}>
             <div className={style.create__edit}>
                 <form className={style.create__form}>

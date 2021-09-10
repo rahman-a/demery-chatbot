@@ -1,8 +1,12 @@
 import api from './init'
 
 const service = {
-    listWriters(){
-        return api().get('writers/all')
+    listWriters(name){
+        const path = name ?`writers/all?name=${name}` :'writers/all'
+        return api().get(path)
+    },
+    listChannels(id){
+        return api().get(`writers/channels/${id}`)
     },
     login(credential){
         return api().post('writers/login', credential)

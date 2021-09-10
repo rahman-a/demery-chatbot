@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser'
 import connectDB from './src/dbConnection.js'
 import {notFound, errorHandler} from './src/middleware/errorHandler.js'
 import writerRouter from './src/routers/writerRouter.js' 
+import channelRouter from './src/routers/channelRouter.js'
 import {fileURLToPath} from 'url'
 import path from 'path' 
 
@@ -21,6 +22,7 @@ app.use(morgan('dev'))
 app.use(helmet())
 app.use(cookieParser())
 app.use('/api/writers', writerRouter)
+app.use('/api/channels', channelRouter)
 app.use('/api/uploads', express.static(path.resolve(__dirname, './uploads')))
 app.use(notFound)
 app.use(errorHandler)

@@ -15,6 +15,19 @@ export const listWritersReducer = (state, action) =>{
     }
 }
 
+export const listChannelsReducer = (state, action) => {
+    switch(action.type){
+        case type.WRITERS_CHANNELS_REQUEST: 
+            return {loading:true, error:null} 
+        case type.WRITERS_CHANNELS_SUCCESS: 
+            return {loading:false, error:null, channels:action.payload}
+        case type.WRITERS_CHANNELS_FAILURE: 
+            return {loading:false, error:action.payload}
+        default:
+            return {...state}
+    }
+}
+
 export const loginReducer = (state, action) => {
     switch(action.type) {
         case type.WRITER_LOGIN_REQUEST: 

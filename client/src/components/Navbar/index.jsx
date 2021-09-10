@@ -38,7 +38,11 @@ const Navbar = ({dashboard, toggleHandler}) => {
                     </div>
                     <div className={style.navbar__avatar}>
                         <img 
-                        src={`/api/uploads/${writer.image}`} 
+                        src={
+                            writer.image 
+                            ? `/api/uploads/${writer.image}`
+                            : 'image/user.png'
+                        } 
                         alt="avatar" onClick={() => setToggle(!toggle)}/>
                         {toggle && <ul className={style.navbar__list}>
                             <li><Link to='/profile'>Profile</Link></li>

@@ -5,6 +5,7 @@ import {composeWithDevTools} from 'redux-devtools-extension'
 import {
     loginReducer,
     writerCreateReducer,
+    listChannelsReducer,
     logoutReducer,
     writerInfoReducer,
     writerInfoEditReducer,
@@ -14,17 +15,29 @@ import {
     writerDeleteReducer
 } from './reducers/writerReducer'
 
+import {
+    createChannelReducer,
+    editChannelReducer,
+    deleteChannelReducer
+} from './reducers/channelReducer'
 
 const reducer = combineReducers({
+    // Writer Reducer
     writer:loginReducer,
     writers:listWritersReducer,
+    channels:listChannelsReducer,
     register:writerCreateReducer,
     info:writerInfoReducer,
     edit:writerInfoEditReducer,
     logout:logoutReducer,
     access:writerAccessReducer,
     infoById:writerInfoByIdReducer,
-    delete:writerDeleteReducer
+    delete:writerDeleteReducer,
+
+    // Channel Reducer
+    channel:createChannelReducer,
+    channelEdit:editChannelReducer,
+    channelDelete:deleteChannelReducer
 })
 
 

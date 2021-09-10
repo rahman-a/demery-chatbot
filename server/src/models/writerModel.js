@@ -19,7 +19,7 @@ const writerSchema = new mongoose.Schema({
     },
     fullName: {
         type:String,
-        match:/^[a-zA-Z ]+$/
+        match:/^[a-zA-Zء-ي ]+$/
     },
     phone: {
         type:String
@@ -42,6 +42,10 @@ const writerSchema = new mongoose.Schema({
         type:Boolean,
         default:true
     },
+    channels:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Channel'
+    }],
     tokens:[
         {
             token:{
@@ -91,6 +95,7 @@ writerSchema.methods.generateToken = async function(){
     await this.save()
     return token
 }
+
 
 writerSchema.methods.toAuthJSON = function() {
     const data = {

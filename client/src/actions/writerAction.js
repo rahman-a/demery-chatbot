@@ -2,15 +2,28 @@ import {type} from '../constants/writerConstants'
 import api from '../api/writerAPI'
 
 
-export const listAllWriters = () => async(dispatch) => {
+export const listAllWriters = (query) => async(dispatch) => {
     dispatch({type: type.WRITERS_LIST_REQUEST})
     try {
-        const {data} = await api.listWriters()
+        const {data} = query ? await api.listWriters(query) : await api.listWriters()
         dispatch({type: type.WRITERS_LIST_SUCCESS, payload:data.writers})
     } catch (error) {
         dispatch({
             type: type.WRITER_BLOCK_FAILURE,
             payload:error.response && error.response.data.message
+        })
+    }
+}
+
+export const listChannels = (id) => async(dispatch) => {
+    dispatch({type: type.WRITERS_CHANNELS_REQUEST})
+    try {
+        const {data} = await api.listChannels(id)
+        dispatch({type: type.WRITERS_CHANNELS_SUCCESS, payload:data.channels})
+    } catch (error) {
+        dispatch({
+            type: type.WRITERS_CHANNELS_FAILURE,
+            payload: error.response && error.response.data.message
         })
     }
 }

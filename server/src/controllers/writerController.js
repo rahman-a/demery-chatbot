@@ -1,3 +1,4 @@
+import Channel from '../models/channelModel.js'
 import Writer from '../models/writerModel.js'
 
 export const createNewWriter = async(req, res, next) => {
@@ -71,11 +72,31 @@ export const getWriterDataById = async (req, res, next) => {
 }
 
 export const getAllWriters = async(req, res, next) => {
+    const {name} = req.query
+    let searchFilter = {} 
     try {
-        const writers = await Writer.find({}) 
-        if(!writers || writers.length === 0){
-            res.status(404)
-            throw new Error('No Writers Found')
+        let writers = []
+        if(name){
+            searchFilter = {
+                fullName:{
+                    $regex:name,
+                    $options:'i'
+                }
+            }
+            const allWriters = await Writer.find({...searchFilter})
+            if(!allWriters || allWriters.length === 0){
+                res.status(404)
+                throw new Error('No Writers Found')
+            }
+            writers = allWriters.map(writer => {
+                return {id:writer._id, name:writer.fullName}
+            })
+        }else {
+            writers = await Writer.find({}) 
+            if(!writers || writers.length === 0){
+                res.status(404)
+                throw new Error('No Writers Found')
+            }
         }
         res.send({writers})
     } catch (error) {
@@ -173,6 +194,28 @@ export const writerDelete = async (req, res, next) => {
     }
 }
 
+export const listAllChannels = async (req, res, next) => {
+    const {id} = req.params
+
+    try {
+        let channels = null
+        const writer = await Writer.findById(id)
+        if(writer.isAdmin){
+            channels = await Channel.find({})
+        }else {
+            const writer = await Writer.findById(id).populate('channels')
+            channels = writer.channels
+        }
+        if(!channels || channels.length === 0){
+            res.status(404)
+            throw new Error('No Channels Found')
+        }
+        res.send({channels})       
+    } catch (error) {
+        next(error)
+    }
+}
+
 
 export const isClientAuthorized = async (req, res, next) => {
     try {
@@ -186,7 +229,7 @@ export const isClientAuthorized = async (req, res, next) => {
     }
 }
 
-function expireAt(day) {
+function expireAt(day) { 
     const today = new Date()
     const expiry = new Date(today)
     return expiry.setDate(today.getDate() + day)

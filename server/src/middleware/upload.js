@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
     }
 })
 
-export const avatarUpload = multer({
+export const uploadHandler = multer({
     storage,
     limits:{
         fileSize:5000000

@@ -3,7 +3,7 @@ import style from './login.module.scss'
 import {Overlay} from '../../components/overlay'
 import {Modal} from '../../components/Modal'
 import Icon from '../../components/icons'
-import {useHistory, useLocation} from 'react-router-dom'
+import {useHistory} from 'react-router-dom'
 import {useDispatch, useSelector} from 'react-redux'
 import {userLogin} from '../../actions/writerAction'
 import Loader from '../../components/Loader'
@@ -14,11 +14,8 @@ const Login = () => {
     const [email, setEmail] = useState(' ') // this email for reset password
     const [forgetPassword, resetForgetPassword] = useState(false)
     const history = useHistory()
-    const location = useLocation()
     const dispatch = useDispatch()
     const {loading, error, isAuth} = useSelector(state => state.writer)
-    const searchQuery = new URLSearchParams(location.search)
-    const redirect = searchQuery.get('redirect') ? searchQuery.get('redirect') :undefined
     
     const submitHandler = e => {
         e.preventDefault()
@@ -35,13 +32,9 @@ const Login = () => {
     }
     useEffect(() => {
         if(isAuth) {
-            if(redirect){
-                history.push(`/${redirect}`)
-                return
-            }
             history.push('/home')
         }
-    },[isAuth, history, redirect])
+    },[isAuth, history])
     return (
         <>
         <Overlay toggle={forgetPassword}/>
@@ -59,13 +52,13 @@ const Login = () => {
             </div>
             <p style={{color:'#656565', fontWeight:'300', padding:'1rem'}}>The Reset Link will be sent to your E-mail within two hours and it will be valid for only 24hrs</p>
         </Modal>
-        <div className={style.login}>
+        <div className={style.login} style={{textAlign:'-webkit-center'}}>
             <div className={style.login__logo}>
                 <Icon name='chatbot' width="70" height='70' className={style.login__icon}/>
                 <h1 className={style.login__header}>Chatbot Dashboard</h1>
             </div>
             {loading 
-            ? <Loader/>
+            ? <Loader size='5'/>
             :error && <Alert variant='danger'>{error}</Alert>}
             <form className={style.login__form} onSubmit={submitHandler}>
                 <div className={style.login__formGroup}>

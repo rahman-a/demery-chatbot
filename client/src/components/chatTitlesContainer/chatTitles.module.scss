@@ -1,6 +1,7 @@
 @use '../../sass/variables' as gv;
 
 .chatTitles {
+    position: relative;
     min-height: 100vh;
     width:30rem;
     background-color: gv.$light-gray-2nd;
@@ -48,5 +49,11 @@
         &:hover {
             background-color: rgba(gv.$yellow-50, 0.1);
         }
+    }
+    &__error {
+        text-align: center;
+        color: gv.$yellow-50;
+        font-size: 3rem;
+        font-weight: 200;
     }
 }

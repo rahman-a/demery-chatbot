@@ -1,8 +1,6 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import style from './navbar.module.scss'
 import Icon from '../icons'
-import ChannelDropMenu from '../channelDropMenu'
-import channels from '../../data/channels'
 import {Link, useHistory} from 'react-router-dom'
 import {useDispatch, useSelector} from 'react-redux'
 import {writerLogout} from '../../actions/writerAction'
@@ -14,6 +12,8 @@ const Navbar = ({dashboard, toggleHandler}) => {
     const [toggle, setToggle] = useState(false)
     const {loading, error} = useSelector(state => state.logout)
     const {writer} = useSelector(state => state.info)
+    const {channel} = useSelector(state => state.oneChannel)
+    
     const logoutHandler = _ => {
         dispatch(writerLogout())
     }
@@ -29,8 +29,13 @@ const Navbar = ({dashboard, toggleHandler}) => {
                         <Icon className={style.navbar__icon} name='chatbot'/>
                     </div>
                     <div className={style.navbar__search}>
-                        { dashboard 
-                        ? <ChannelDropMenu channels={channels} activeChannelId={1}/>
+                        {dashboard
+                        ? channel
+                        ?<div className={style.navbar__channel}>
+                            <p>{channel.name}</p>
+                            <img src={`/api/uploads/${channel.image}`} alt='book'/>
+                        </div>
+                        : ''
                         :<form>
                             <input type="text" name='search'/>
                             <button type="submit" onClick={(e) => e.preventDefault()}>search</button>

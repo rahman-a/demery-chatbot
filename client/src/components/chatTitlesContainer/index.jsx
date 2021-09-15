@@ -1,13 +1,20 @@
-import React, {useState, useRef} from 'react'
+import React, {useState, useRef, useEffect} from 'react'
 import style from './chatTitles.module.scss'
 import ChatTitle from '../chatTitle'
-import {useBlockState, useBlockDispatch} from '../../context/blockData'
+import {listBlocks} from '../../actions/blockAction'
+import {useDispatch, useSelector} from 'react-redux'
+import {useParams} from 'react-router-dom'
+import Loader from '../../components/Loader'
 import {CHAT_BLOCK_REARRANGE} from '../../context/actionTypes'
-import blocks from '../../data/blocks'
 
 const ChatTitles = () => {
-    const {chatBlocks} = useBlockState()
-    const dispatch = useBlockDispatch()
+    const [searchInput, setSearchInput] = useState('')
+    const dispatch = useDispatch()
+    const {loading, error, blocks} = useSelector(state => state.blocks)
+    const {message} = useSelector(state => state.newBlock)
+    const {isDeleted} = useSelector(state => state.blockDelete)
+    const {message:editMessage} = useSelector(state => state.editBlock)
+    const {id} = useParams()
     const [isDragging, setIsDragging] = useState(false)
     const [isEndDragging, setIsEndDragging] = useState(false)
     const dragBlock = useRef(null)
@@ -24,8 +31,8 @@ const ChatTitles = () => {
     
     const dragEnterHandler = (e, params) => {
         const current = dragBlock.current
-        e.target.className += 'dragEnter'
-        const newBlocks = JSON.parse(JSON.stringify(chatBlocks))
+        e.target.className += ' dragEnter'
+        const newBlocks = JSON.parse(JSON.stringify(blocks))
         newBlocks.splice(params.idx, 0, newBlocks.splice(current.idx, 1)[0])
         dragBlock.current = params
         dispatch({type:CHAT_BLOCK_REARRANGE, payload:newBlocks})
@@ -47,24 +54,38 @@ const ChatTitles = () => {
 
     const blockTitleSearchHandler = e => {
         e.preventDefault()
-        localStorage.setItem('chatBlocks', JSON.stringify(blocks))
+        dispatch(listBlocks(id, searchInput))
     }
+
+    useEffect(() => {
+        if(id){
+            dispatch(listBlocks(id))
+        }
+    }, [id, dispatch, message, isDeleted, editMessage])
 
     return (
         <div className={style.chatTitles}>
            <form className={style.chatTitles__search}>
-                <input type="text" name='search' placeholder='search by block name'/>
+                <input 
+                type="text" 
+                name='search' 
+                placeholder='search by block name'
+                onChange={(e) => setSearchInput(e.target.value)}/>
                 <button type="submit" onClick={blockTitleSearchHandler}>search</button>
             </form>
-            <button 
+            {/* <button 
             onClick={saveOrderHandler} 
             className={style.chatTitles__order}
             style={{visibility: isEndDragging ? 'visible': 'hidden'}}
             >
                 Save
-            </button>
-            <div className={style.chatTitles__blocks}>
-                {chatBlocks && chatBlocks.map((b, idx) => (
+            </button> */}
+            {loading 
+            ? <Loader size='15' center top='20'/>
+            : error 
+            ? <h2 className={style.chatTitles__error}>{error}</h2>
+            :<div className={style.chatTitles__blocks}>
+                {blocks && blocks.map((b, idx) => (
                 <ChatTitle 
                 key={b._id} 
                 data = {{...b, idx}}
@@ -74,7 +95,7 @@ const ChatTitles = () => {
                 dragBlock={dragBlock}
                 />
                 ))}
-            </div>
+            </div>}
         </div>
     )
 }

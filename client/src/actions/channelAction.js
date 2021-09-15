@@ -14,6 +14,19 @@ export const createChannel = (info) => async (dispatch) => {
     }
 }
 
+export const getOneChannel = (id) => async (dispatch) => {
+    dispatch({type: type.CHANNEL_GET_REQUEST})
+    try {
+        const {data} = await api.get(id)
+        dispatch({type: type.CHANNEL_GET_SUCCESS, payload:data.channel})
+    } catch (error) {
+        dispatch({
+            type: type.CHANNEL_GET_FAILURE,
+            payload:error.response && error.response.data.message
+        })
+    }
+}
+
 export const editChannel = (info, id) => async (dispatch) => {
     dispatch({type: type.CHANNEL_EDIT_REQUEST})
     try {

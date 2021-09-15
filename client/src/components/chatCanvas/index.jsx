@@ -3,17 +3,29 @@ import style from './chatCanvas.module.scss'
 import ObjectId from 'bson-objectid'
 import ChatBlock from '../chatBlock'
 import {useChatOpsDispatch, useChatOpsState} from '../../context/blockOps'
-import {CHAT_OPS_CREATE, CHAT_OPS_DELETE, CHAT_OPS_REMOVE_GALLERY_BLOCK ,CHAT_OPS_RESET} from '../../context/actionTypes'
+import {CHAT_OPS_CREATE, 
+    CHAT_OPS_DELETE,
+     CHAT_OPS_REMOVE_GALLERY_BLOCK ,
+     CHAT_OPS_RESET
+} from '../../context/actionTypes'
 import Icon from '../icons'
 import ChatTest from '../chatTest'
+import { useSelector, useDispatch } from 'react-redux'
+import { useParams } from 'react-router'
+import {getDialogues} from '../../actions/dialogueAction'
 
 const ChatCanvas = () => {
     const [galleryBlocks, setGalleryBlocks] = useState([])
     const [collectGalleryData, setCollectGalleryData] = useState([])
     const [galleryName, setGalleryName] = useState('')
+    const {blocks} = useSelector(state => state.blocks)
+    const {writer} = useSelector(state => state.info)
     const [isChatBlock, setIsChatBlock] = useState(false)
+    const [actionBlocks, setActionBlocks] = useState([])
     const {blockOps} = useChatOpsState()
     const dispatch = useChatOpsDispatch()
+    const dialogueDispatch = useDispatch()
+    const {id} = useParams()
     
         const createNewBlockHandler = (e, block) => {
             const type = e.target.textContent 
@@ -28,6 +40,17 @@ const ChatCanvas = () => {
             ? {_id:ObjectId().toHexString(), type:block}
             : {_id:ObjectId().toHexString(), type:type}
             dispatch({type:CHAT_OPS_CREATE, payload:newBlock})
+        }
+
+        const actionsBlocksHandler = data => {
+            const block = actionBlocks.find(b => b._id === data._id)
+            if(!block){
+                setActionBlocks([...actionBlocks, data])
+                return
+            }
+            console.log('filtered');
+            const filteredBlocks = actionBlocks.filter(b => b._id !== data._id)
+            setActionBlocks([...filteredBlocks, data])
         }
 
         const deleteChatBlock = (e, id) => {
@@ -46,6 +69,10 @@ const ChatCanvas = () => {
            setGalleryName('')
         }
 
+        const startDialogueHandler = _ => {
+            setIsChatBlock(!isChatBlock)
+            !isChatBlock && dialogueDispatch(getDialogues({channelId:id, writerId:writer._id}))
+        }
 
     useEffect(() => {
         if(blockOps) {
@@ -55,20 +82,27 @@ const ChatCanvas = () => {
                 setGalleryName(blockOps[0].name)
             }
         }
-    },[blockOps])
+        if(blocks){
+            if(actionBlocks.length){
+                setActionBlocks(actionBlocks)
+            }else {
+                setActionBlocks(blocks)
+            }
+        }
+    },[blockOps, blocks])
     return (
         <div className={style.chatCanvas}>
             <ChatTest toggle={isChatBlock} setToggle={setIsChatBlock}/>
             <div className={style.chatCanvas__chat}>
-                <span onClick={() => setIsChatBlock(!isChatBlock)}>
+                <span onClick={startDialogueHandler}>
                     <Icon name='chat-test'/>
                 </span>
             </div>
             <ul className={style.chatCanvas__create}>
-                <li onClick={(e) => createNewBlockHandler(e)}>Text</li>
+                {/* <li onClick={(e) => createNewBlockHandler(e)}>Text</li> */}
                 <li onClick={(e) => createNewBlockHandler(e)}>Interactive</li>
                 <li onClick={(e) => createNewBlockHandler(e)}>Card</li>
-                <li onClick={(e) => createNewBlockHandler(e)}>Gallery</li>
+                {/* <li onClick={(e) => createNewBlockHandler(e)}>Gallery</li> */}
             </ul>
             {(galleryBlocks.length > 0 || blockOps[0]?.type === 'Gallery') && <div className={style.chatCanvas__gallery}>
                 <input type="text" 
@@ -91,6 +125,8 @@ const ChatCanvas = () => {
                         galleryName={galleryName}
                         setGalleryName={setGalleryName}
                         blocks={blockOps}
+                        actionBlocks={actionBlocks}
+                        setActionBlocks={actionsBlocksHandler}
                         setCollectGalleryData={setCollectGalleryData}
                         collectGalleryData={collectGalleryData}
                         deleteHandler={(e) => deleteChatBlock(e, block._id)}/>
@@ -104,6 +140,8 @@ const ChatCanvas = () => {
                             data={gal}
                             type={block.type}
                             blocks={block.gallery}
+                            actionBlocks={actionBlocks}
+                            setActionBlocks={actionsBlocksHandler}
                             galleryName={galleryName}
                             setGalleryName={setGalleryName}
                             setCollectGalleryData={setCollectGalleryData}

@@ -2,7 +2,7 @@ import React, {useState, useRef, useEffect, useCallback} from 'react'
 import style from './blockCTA.module.scss'
 import Icon from '../icons'
 import DropdownMenu from '../dropdownMenu'
-import {useBlockState} from '../../context/blockData'
+import {useSelector} from 'react-redux'
 import BlockAlert from '../blockAlert'
 
 const BlockCTS = ({
@@ -14,6 +14,7 @@ const BlockCTS = ({
     getButtonsData,
     buttonsData,
     setSaveGBlock,
+    actionBlocks,
     btnID}) => {
     const [panelToggle, setPanelToggle] = useState(false)
     const [isInputSent, setIsInputSent] = useState(false)
@@ -22,7 +23,7 @@ const BlockCTS = ({
     const [action, setAction] = useState(null)
     const [btnTitle, setBtnTitle] = useState('')
     const [alert, setAlert] = useState('')
-    const {chatBlocks} = useBlockState()
+    const {blocks} = useSelector(state => state.blocks)
     const listRef = useRef(null)
     const callRef = useRef(null)
     const doneRef = useRef(null)
@@ -55,7 +56,7 @@ const BlockCTS = ({
     }
     const callToggleHandler = _ => {
         if(!actionType) return setAlert('Please specify the action type')
-        if(actionType && (actionType !== 'Subscribe' && actionType !== 'Unsubscribe')) {
+        if(actionType) {
             if(callToggle) {
                 callRef.current.style.display = 'none'
                 setCallToggle(false)
@@ -84,18 +85,18 @@ const BlockCTS = ({
     
     },[action,actionType, btnTitle])
 
-    const sendBtnData = useCallback( _ => {
-        const filteredData = buttonsData.filter(btn => btn._id !== btnID)
-        if(actionType === 'Subscribe' || actionType === 'Unsubscribe'){
-            setSaveGBlock(true)
-            getButtonsData([...filteredData,{
-                title:btnTitle,
-                type:actionType,
-                action:'',
-                _id:btnID
-            }]) 
-        } 
-        },[actionType, btnTitle])
+    // const sendBtnData = useCallback( _ => {
+    //     const filteredData = buttonsData.filter(btn => btn._id !== btnID)
+    //     if(actionType === 'Subscribe' || actionType === 'Unsubscribe'){
+    //         setSaveGBlock(true)
+    //         getButtonsData([...filteredData,{
+    //             title:btnTitle,
+    //             type:actionType,
+    //             action:'',
+    //             _id:btnID
+    //         }]) 
+    //     } 
+    //     },[actionType, btnTitle])
 
     const setIncomingDataForEdit = _ => {
         if(buttonsData.length) {
@@ -106,10 +107,10 @@ const BlockCTS = ({
     }
     
     useEffect(() => {
-        sendBtnData()
+        // sendBtnData()
         btnTitle && sendActionHandler()
        !btnTitle && setIncomingDataForEdit()
-    },[sendBtnData, btnTitle])
+    },[btnTitle])
 
     return (
         <div className={style.cta}>
@@ -146,11 +147,13 @@ const BlockCTS = ({
                     <li onClick={(e) => panelToggleHandler(e,'action')}>Unsubscribe</li>
                 </ul>
                 <div className={style.cta__call} ref={callRef}>
-                    {actionType === 'Move to Chat Block' 
+                    {(actionType === 'Move to Chat Block' 
+                    || actionType === 'Subscribe' 
+                    || actionType === 'Unsubscribe')
                     ? <DropdownMenu className={style.cta__blocks} 
                     placeholder='choose the block' 
                     value={action&&action.name}>
-                        {chatBlocks.map(block => (
+                        {actionBlocks && actionBlocks.map(block => (
                             <li 
                             key={block._id}
                             onClick={() => {
@@ -162,14 +165,15 @@ const BlockCTS = ({
                             </li>
                         ))}
                         </DropdownMenu>
-                    :<div className={style.cta__input}><input
-                    onChange={(e) => setAction(e.target.value)}
-                    type="text" 
-                    name="action" 
-                    placeholder='type the action'/>
-                    <button onClick={() => sendActionHandler()}> 
-                    <Icon name={isInputSent ?'check-mark' :'plus-square'} width='15' height='15'/> 
-                    </button>
+                    :<div className={style.cta__input}>
+                        <input
+                        onChange={(e) => setAction(e.target.value)}
+                        type="text" 
+                        name="action" 
+                        placeholder='type the action'/>
+                        <button onClick={() => sendActionHandler()}> 
+                        <Icon name={isInputSent ?'check-mark' :'plus-square'} width='15' height='15'/> 
+                        </button>
                     </div> }
                 </div>
             </div>

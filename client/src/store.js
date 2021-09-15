@@ -17,9 +17,21 @@ import {
 
 import {
     createChannelReducer,
+    getChannelReducer,
     editChannelReducer,
     deleteChannelReducer
 } from './reducers/channelReducer'
+
+import {
+    createBlockReducer,
+    ListBlocksReducer,
+    editBlockReducer,
+    deleteBlockReducer
+} from './reducers/blockReducer'
+
+import {
+    getDialoguesReducer
+} from './reducers/dialogueReducer'
 
 const reducer = combineReducers({
     // Writer Reducer
@@ -36,8 +48,18 @@ const reducer = combineReducers({
 
     // Channel Reducer
     channel:createChannelReducer,
+    oneChannel: getChannelReducer,
     channelEdit:editChannelReducer,
-    channelDelete:deleteChannelReducer
+    channelDelete:deleteChannelReducer,
+
+    // Block Reducer 
+    newBlock:createBlockReducer,
+    editBlock:editBlockReducer,
+    blocks:ListBlocksReducer,
+    blockDelete:deleteBlockReducer,
+    
+    // Dialogue Reducer
+    getDialogues:getDialoguesReducer,
 })
 
 
@@ -54,6 +76,7 @@ const isWriterAuth = _ => {
             return true
         }else {
             localStorage.removeItem('writer')
+            localStorage.removeItem('expiryAt')
             return false
         }
     }else {

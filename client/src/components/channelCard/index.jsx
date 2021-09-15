@@ -192,7 +192,7 @@ const ChannelCard = ({data}) => {
         </Modal>
         <div className={style.channel}
         style={{width: !(writer.isAdmin) && '43rem'}}
-        onClick={() => history.push('/dashboard')}>
+        onClick={() => history.push(`/dashboard/${data._id}`)}>
            {writer.isAdmin && <div className={style.channel__setting} onClick={(e) => toggleEditHandler(e)}>
                <Icons name='trash' eventHandler={(e) => {
                    e.stopPropagation()

@@ -8,6 +8,8 @@ import connectDB from './src/dbConnection.js'
 import {notFound, errorHandler} from './src/middleware/errorHandler.js'
 import writerRouter from './src/routers/writerRouter.js' 
 import channelRouter from './src/routers/channelRouter.js'
+import dialogueRouter from './src/routers/dialogueRouter.js'
+import blockRouter from './src/routers/blockRouter.js'
 import {fileURLToPath} from 'url'
 import path from 'path' 
 
@@ -23,6 +25,8 @@ app.use(helmet())
 app.use(cookieParser())
 app.use('/api/writers', writerRouter)
 app.use('/api/channels', channelRouter)
+app.use('/api/blocks', blockRouter)
+app.use('/api/dialogues', dialogueRouter)
 app.use('/api/uploads', express.static(path.resolve(__dirname, './uploads')))
 app.use(notFound)
 app.use(errorHandler)

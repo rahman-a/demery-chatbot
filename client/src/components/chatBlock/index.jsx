@@ -4,15 +4,17 @@ import BlockCTS from '../blockCTA'
 import Icon from '../icons'
 import ObjectID  from 'bson-objectid'
 import {useDrag} from 'react-use-gesture'
-import {useChatOpsDispatch} from '../../context/blockOps'
+import {useChatOpsDispatch, useChatOpsState} from '../../context/blockOps'
 import {
     CHAT_OPS_CREATE, 
     CHAT_OPS_ADD_GALLERY_BLOCK, 
-    CHAT_BLOCK_CREATE,
     CHAT_OPS_RESET
 } from '../../context/actionTypes'
-import {useBlockDispatch} from '../../context/blockData'
 import BlockAlert from '../blockAlert'
+import { useSelector,useDispatch } from 'react-redux'
+import {useParams} from 'react-router-dom'
+import {createBlock, editBlock} from '../../actions/blockAction'
+import Loader from '../Loader'
 
 const ChatBlock = ({
     blocks, 
@@ -24,7 +26,9 @@ const ChatBlock = ({
     setCollectGalleryData,
     galleryName,
     setGalleryName,
-    blockId
+    blockId,
+    actionBlocks,
+    setActionBlocks
 }) => {
     const [blockData, setBlockData] = useState({
         name:'',
@@ -38,10 +42,16 @@ const ChatBlock = ({
     const [blockPos, setBlockPos] = useState({x:0, y:0})
     const [isAR, setIsAR] = useState(true)
     const [alert, setAlert] = useState('')
-    const [imageSRC, setImageSRC] = useState('image/preview.png')
+    const [initOn, setInitOn] = useState(false)
+    const {id}  = useParams()
+    const {writer} = useSelector(state => state.info)
+    const [imageSRC, setImageSRC] = useState('/image/preview.png')
     const [saveGBlock, setSaveGBlock] = useState(false)
     const dispatch = useChatOpsDispatch()
-    const blockDispatch = useBlockDispatch()
+    const {blockOps} = useChatOpsState()
+    const blockDispatch = useDispatch()
+    const {channel} = useSelector(state => state.oneChannel)
+    const {loading, error} = useSelector(state => state.newBlock)
     const moveChatBlock = useDrag(params => {
         setBlockPos({
             x:params.offset[0],
@@ -90,8 +100,7 @@ const ChatBlock = ({
                 } catch (error) {
                     setAlert(isAR ? 'حدث خطأ ما من فضلك حاول مجددا' : 'something happened please try again')
                 }
-                // const image = e.target.files[0]
-                const image = URL.createObjectURL(e.target.files[0])
+                const image = e.target.files[0]
                 setBlockData({...blockData,image})
             }else {
                 const inputData = {[e.target.name] : e.target.value}
@@ -123,9 +132,11 @@ const ChatBlock = ({
                         type:'Gallery',
                         name:galleryName,
                         abbr:'GL',
+                        creator:writer._id,
+                        channel:id,
                         gallery:collectGalleryData
                     }
-                    blockDispatch({type:CHAT_BLOCK_CREATE, payload:galleryData})
+                    // blockDispatch({type:CHAT_BLOCK_CREATE, payload:galleryData})
                     setCollectGalleryData([])
                     dispatch({type:CHAT_OPS_RESET})
                     setGalleryName('')
@@ -133,8 +144,21 @@ const ChatBlock = ({
                     setAlert(isAR ?'اضغط على حفظ اولا قبل الضغط على تم' : 'click save first before click done')
                 }
             }else {
-                console.log('save Block', chatData);
-                blockDispatch({type:CHAT_BLOCK_CREATE, payload:chatData})
+                const JSONData = new FormData()
+                for(let key in chatData){
+                    if(key === 'buttons'){
+                        JSONData.append(key, JSON.stringify(chatData[key]))
+                    }else{
+                        JSONData.append(key, chatData[key])
+                    }
+                }
+                const block = blockOps.find(block => block._id === chatData._id)
+                if(block.buttons){
+                    console.log(JSONData);
+                    blockDispatch(editBlock(JSONData))
+                }else {
+                    blockDispatch(createBlock(JSONData))
+                }
                 deleteHandler(undefined ,chatData._id)
             }
         }
@@ -153,6 +177,9 @@ const ChatBlock = ({
             buttons:actionBtns,
             _id: blockData._id ? blockData._id : data._id,
             type,
+            creator:writer._id,
+            channel:id,
+            role: initOn ? 'init':'',
             abbr:allAbbr[type]
         }
         for(let key in chatData) {
@@ -165,7 +192,10 @@ const ChatBlock = ({
                     break;
                 case 'Card':
                 case 'Gallery':
-                    if(key !== 'title' && chatData[key] === ''){
+                    if(key !== 'title' 
+                    && key !== 'role' 
+                    && chatData[key] === '')
+                    {
                         key === 'image' 
                         ? setAlert(`please upload an image`) 
                         :setAlert(`please fill the ${key} input`)
@@ -195,6 +225,11 @@ const ChatBlock = ({
     
     return (
         <>
+        {
+            loading 
+            ? <Loader size='35' center/>
+            : error && setAlert(error)
+        }
         <div 
         className={`${style.chatBlock} ${isAR ?style.chatBlock__change_lang : ''}`}
         {...moveChatBlock()}
@@ -209,7 +244,10 @@ const ChatBlock = ({
                name='name' 
                placeholder={isAR ?'أكتب اسم البلوك هنا':'write the block name'} 
                defaultValue={data ? data.name : ''}
-               onChange={(e) => getBlockDataHandler(e)}/>
+               onChange={(e) => {
+                   getBlockDataHandler(e)
+                   setActionBlocks({_id:data._id, type, name:e.target.value})
+                }}/>
 
                {data.type === 'Gallery' 
                && !(idx === blocks.length - 1) 
@@ -245,11 +283,17 @@ const ChatBlock = ({
            <div className={style.chatBlock__block}>
                <figure 
                className={`${style.chatBlock__avatar} ${data.type === 'Text' ? style.chatBlock__msg : ''}`}>
-                   <img src="image/avatar.png" style={{width:'3rem'}} alt="" />
+                   <img src={channel ? `/api/uploads/${channel.image}` :'/image/user.png'} 
+                   style={{width:'3rem', clipPath:'circle()'}} alt="" />
                    <button onClick={langChangeHandler} className={style.chatBlock__lang}>{langName}</button>
                    <span className={style.chatBlock__remove} onClick={(e) => deleteHandler(e)}>
                        <Icon name='trash'/>
                    </span>
+                   <p
+                   onClick={() => setInitOn(!initOn)}
+                   className={`${style.chatBlock__init} ${initOn ? style.chatBlock__init_on : ''}`}>
+                       INIT
+                    </p>
                    { data.type === 'Gallery' 
                     && saveGBlock &&
                         <button 
@@ -276,8 +320,8 @@ const ChatBlock = ({
                            <input type="file" id={`upload-${idx}`} 
                            onChange={(e) => getBlockDataHandler(e)}/>
                        </div>
-                       <img src={data && (data.abbr === 'CD' || data.abbr === 'GL') 
-                       ? data.image 
+                       <img src={data && data.image && (data.abbr === 'CD' || data.abbr === 'GL') 
+                       ? `/api/uploads/${data.image}` 
                        :imageSRC} 
                        alt="preview"/>
                    </figure>}
@@ -307,6 +351,7 @@ const ChatBlock = ({
                         data={action}
                         isAR={isAR}
                         btnID={action._id}
+                        actionBlocks={actionBlocks}
                         removeCTAHandler={removeCTA} 
                         addCTAHandler={addNewCTA}
                         getButtonsData={setActionBtns}

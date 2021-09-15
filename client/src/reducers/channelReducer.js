@@ -13,6 +13,19 @@ export const createChannelReducer = (state, action) => {
     }
 }
 
+export const getChannelReducer = (state, action) => {
+    switch(action.type){
+        case type.CHANNEL_GET_REQUEST: 
+            return {loading:true, error:null}
+        case type.CHANNEL_GET_SUCCESS: 
+            return {loading:false, error:null, channel:action.payload} 
+        case type.CHANNEL_GET_FAILURE: 
+            return {loading:false, error:action.payload}
+        default:
+            return {...state}
+    }
+}
+
 export const editChannelReducer = (state, action) => {
     switch(action.type) {
         case type.CHANNEL_EDIT_REQUEST: 

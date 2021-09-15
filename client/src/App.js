@@ -26,7 +26,7 @@ function App() {
         <Route path='/info/:id'>
           {isAuth ? <Info/> : <Redirect to='?redirect=info'/>}
         </Route>
-        <Route path='/dashboard'>
+        <Route path='/dashboard/:id'>
           {isAuth ? <Dashboard/> :  <Redirect to='?redirect=dashboard'/>}
         </Route>
         <Route path='/writers'>

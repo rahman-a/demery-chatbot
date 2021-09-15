@@ -9,6 +9,9 @@ const service = {
     }, 
     remove(id){
         return api().delete(`channels/delete/${id}`)
+    },
+    get(id){
+        return api().get(`channels/${id}`)
     }
 }
 

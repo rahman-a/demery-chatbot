@@ -1,14 +1,17 @@
 import React from 'react'
 import style from './chatTitle.module.scss'
 import Icon from '../icons'
-import {useBlockDispatch} from '../../context/blockData'
 import {useChatOpsDispatch, useChatOpsState} from '../../context/blockOps'
-import {CHAT_BLOCK_DELETE, CHAT_OPS_CREATE} from '../../context/actionTypes'
+import {CHAT_OPS_CREATE} from '../../context/actionTypes'
+import { useDispatch, useSelector } from 'react-redux'
+import {deleteBlock} from '../../actions/blockAction'
 
 const ChatTitle = ({data, dragStart, dragEnter, isDragging, dragBlock}) => {
     const pushDispatch = useChatOpsDispatch()
-    const deleteDispatch = useBlockDispatch()
+    const deleteDispatch = useDispatch()
+    const {blocks} = useSelector(state => state.blocks)
     const {blockOps} = useChatOpsState()
+    const indexOfBlock = blocks.findIndex(block => block._id === data._id)
     
     const getStyle = _ => {
         if(dragBlock.current.id === data._id){
@@ -26,17 +29,17 @@ const ChatTitle = ({data, dragStart, dragEnter, isDragging, dragBlock}) => {
        } 
     }
     const deleteTitleHandler = _ => {
-        deleteDispatch({type:CHAT_BLOCK_DELETE, payload:data._id})
+        deleteDispatch(deleteBlock(data._id))
     }
     return (
         <div 
         className={isDragging ? getStyle():style.chatTitle}
-        onDragStart={(e) => dragStart(e, {idx:data.idx, id:data._id})}
-        onDragEnter={(e) => dragEnter(e, {idx:data.idx, id:data._id})}
+        onDragStart={(e) => dragStart(e, {idx:indexOfBlock, id:data._id})}
+        onDragEnter={(e) => dragEnter(e, {idx:indexOfBlock, id:data._id})}
         draggable
         >
             <span className={style.chatTitle__type}>{data.abbr}</span>
-            <p style={{textAlign:'center'}} className={style.chatTitle__channel}>{data.name}</p>
+            <p style={{textAlign:'center', margin:'0'}} className={style.chatTitle__channel}>{data.name}</p>
             <div className={style.chatTitle__option}>
                 <span className={style.chatTitle__edit}  onClick={editTitleHandler}>
                     <Icon name='edit'/>

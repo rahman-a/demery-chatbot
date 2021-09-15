@@ -2,10 +2,15 @@ import React, {useState} from 'react'
 import style from './chatTest.module.scss'
 import Icon from '../icons'
 import ObjectID from 'bson-objectid'
+import { useSelector } from 'react-redux'
+import Loader from '../Loader'
+import Alert from 'react-bootstrap/Alert'
 
 const ChatTest = ({toggle, setToggle}) => {
     const [dialogue, setDialogue] = useState([])
     const [content, setContent] = useState('')
+    const {channel} = useSelector(state => state.oneChannel)
+    const {loading, error, block} = useSelector(state => state.getDialogues)
     
     const chatStyle = {
         bottom:toggle ? '8rem': '3rem',
@@ -40,22 +45,26 @@ const ChatTest = ({toggle, setToggle}) => {
                     </span>
                </div>
                <div className={style.test__channel}>
-                   <p>قناة عالم كرة القدم</p>
-                   <img src="image/football.jpg" alt="channel name" />
+                   <p>{channel && channel.name}</p>
+                   <img src={channel && `/api/uploads/${channel.image}`} alt="channel name" />
                </div>
            </div>
            <div className={style.test__body}>
-               {dialogue.map((d, i) => (
-                   <div style={{direction: i%2 === 0 ? 'ltr' : 'rtl'}}
-                   className={style.test__dialogue} 
-                   key={d._id}>
-                        <img src="image/avatar.png" alt="avatar" />
-                        <p>{d.content}</p>
+               {
+                   loading 
+                   ? <Loader size='20' center/>
+                   : error 
+                   ? <Alert variant='danger'>{error}</Alert>
+                   : block && <div className={style.test__dialogue}>
+                       {block.name}
                    </div>
-               ))}   
+               }
            </div>
            <div className={style.test__send}>
-                <input type="text" onKeyDown={(e) => pushTextToChatOnEnter(e)} 
+                <input 
+                type="text" 
+                placeholder='start writing here....'
+                onKeyDown={(e) => pushTextToChatOnEnter(e)} 
                 onChange={({target:{value}}) => setContent(value)}
                 value={content}/>
                 <span  onClick={pushTextToChat}>
@@ -67,3 +76,13 @@ const ChatTest = ({toggle, setToggle}) => {
 }
 
 export default ChatTest
+
+
+// {dialogue.map((d, i) => (
+//     <div style={{direction: i%2 === 0 ? 'ltr' : 'rtl'}}
+//     className={style.test__dialogue} 
+//     key={d._id}>
+//          <img src={`/api/uploads/${channel.image}`} alt="avatar" />
+//          <p>{d.content}</p>
+//     </div>
+// ))}   

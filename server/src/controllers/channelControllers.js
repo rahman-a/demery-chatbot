@@ -29,6 +29,20 @@ export const createChannel = async (req, res, next) => {
     }
 }
 
+export const getOneChannel = async(req, res, next) => {
+    const {id} =  req.params 
+    try {
+        const channel  = await Channel.findById(id)
+        if(!channel){
+            res.status(404)
+            throw new Error('No Channel Found')
+        }
+        res.send({channel})
+    } catch (error) {
+        next(error)
+    }
+}
+
 export const editChannel = async(req, res, next) => {
     const data = req.body
     const {id} = req.params

@@ -64,6 +64,7 @@
     &__avatar {
         margin: 1rem 1rem 0 0;
         position: relative;
+        top:-0.5rem;
     }
 
     &__img {
@@ -154,7 +155,7 @@
     &__remove {
         cursor: pointer;
         position: absolute;
-        top:10rem;
+        top:9rem;
         left:0;
         svg {
             width:2rem;
@@ -171,12 +172,16 @@
         }
 
         span {
-            top:3.2rem;
+            top:3rem;
             left:10rem;
             svg {
                 width:1.6rem;
                 height: 1.6rem;
             }
+        }
+        p {
+            top:3.2rem;
+            left:14rem;
         }
     }
     &__order {
@@ -220,5 +225,19 @@
         &:hover {
             background-color: rgba(gv.$yellow-50, 0.2);
         }
+    }
+    &__init {
+        color:rgba(gv.$light-black, 0.5);
+        text-decoration:line-through;
+        &_on {
+            color: #0fc526;
+            text-shadow: 1px -2px 20px rgb(54 198 7 / 74%), 
+            1px -5px 15px rgb(94 230 49 / 74%);
+            text-decoration:unset;
+        }
+        position: absolute;
+        top: 12.5rem;
+        left:0;
+        cursor: pointer;
     }
 }

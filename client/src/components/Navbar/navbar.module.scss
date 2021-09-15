@@ -18,9 +18,14 @@
     &__search {
         width:40rem;
         position: relative;
+        display: flex;
+        justify-content: center;
+        form {
+            width:100%
+        }
         input {
             all:unset;
-            width:70%;
+            width:90%;
             border:1px solid gv.$yellow-50;
             border-radius: 1.5rem;
             padding:0.5rem 1rem;
@@ -33,13 +38,30 @@
             border-radius: 1.5rem;
             color: gv.$yellow-50;
             position: absolute;
-            right: 9.8rem;
+            right: 1.75rem;
             padding: 0.5rem 1rem;
             text-align: center;
             cursor: pointer;
             &:hover {
                 background-color: rgba(gv.$yellow-50, 0.1);
             }
+        }
+    }
+    &__channel {
+        display: flex;
+        align-items: center;
+        img {
+            width:3rem;
+            height: 3rem;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        p {
+            font-size: 1.8rem;
+            font-weight: 500;
+            font-family: gv.$second-font;
+            margin-right: 1rem;
+            transform: translateY(2px);
         }
     }
     &__icon {

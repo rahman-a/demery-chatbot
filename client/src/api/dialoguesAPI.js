@@ -1,12 +1,15 @@
 import api from './init'
 
 const service = {
-    checkDialogues(data){
-        return api().post('dialogues', data)
+    checkDialogues(channelId, dialoguesCount){
+        return api().get(`dialogues/${channelId}?skip=${dialoguesCount}`)
     },
-    getBlock(id){
-        return api().get(`dialogues/blocks/${id}`)
+    getBlock({block, channel}){
+        return api().get(`dialogues/block/${block}/${channel}`)
     },
+    deleteRecords(channelId){
+        return api().delete(`dialogues/${channelId}`)
+    }
 }
 
 export default service

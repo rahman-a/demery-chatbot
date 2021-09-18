@@ -141,3 +141,29 @@ export const writerDeleteReducer = (state, action) => {
             return {...state}
     }
 }
+
+export const writerSubscribeReducer = (state, action) => {
+    switch(action.type){
+        case type.WRITER_SUBSCRIBE_REQUEST: 
+            return {loading:true, error:null}
+        case type.WRITER_SUBSCRIBE_SUCCESS: 
+            return {loading:false, error:null, message:action.payload}
+        case type.WRITER_SUBSCRIBE_FAILURE: 
+            return {loading: false, error:action.payload} 
+        default:
+            return {...state}
+    }
+}
+
+export const writerUnsubscribeReducer = (state, action) => {
+    switch(action.type){
+        case type.WRITER_UNSUBSCRIBE_REQUEST: 
+            return {loading:true, error:null}
+        case type.WRITER_UNSUBSCRIBE_SUCCESS: 
+            return {loading:false, error:null, message:action.payload}
+        case type.WRITER_UNSUBSCRIBE_FAILURE: 
+            return {loading: false, error:action.payload} 
+        default:
+            return {...state}
+    }
+}

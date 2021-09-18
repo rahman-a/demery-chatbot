@@ -96,6 +96,18 @@ writerSchema.methods.generateToken = async function(){
     return token
 }
 
+writerSchema.methods.subscribe = async function(channelId){
+    if(!(this.channels.includes(channelId))){
+        this.channels = this.channels.concat(channelId)
+        await this.save()
+    }
+}
+
+writerSchema.methods.unsubscribe = async function(channelId){
+    this.channels = this.channels.filter(channel => channel._id !== channelId )
+    await this.save()
+}
+
 
 writerSchema.methods.toAuthJSON = function() {
     const data = {

@@ -5,7 +5,6 @@ import {listBlocks} from '../../actions/blockAction'
 import {useDispatch, useSelector} from 'react-redux'
 import {useParams} from 'react-router-dom'
 import Loader from '../../components/Loader'
-import {CHAT_BLOCK_REARRANGE} from '../../context/actionTypes'
 
 const ChatTitles = () => {
     const [searchInput, setSearchInput] = useState('')
@@ -35,7 +34,6 @@ const ChatTitles = () => {
         const newBlocks = JSON.parse(JSON.stringify(blocks))
         newBlocks.splice(params.idx, 0, newBlocks.splice(current.idx, 1)[0])
         dragBlock.current = params
-        dispatch({type:CHAT_BLOCK_REARRANGE, payload:newBlocks})
     }
     
     const dragEndHandler = _ => {

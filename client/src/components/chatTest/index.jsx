@@ -1,16 +1,30 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import style from './chatTest.module.scss'
 import Icon from '../icons'
-import ObjectID from 'bson-objectid'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import Loader from '../Loader'
 import Alert from 'react-bootstrap/Alert'
+import ChatTestBlock from './chatTestBlock'
+import {useBlockDispatch, useBlockState} from '../../context/blockData'
+import {CHAT_BLOCKS_ADD} from '../../context/actionTypes'
+import {type} from '../../constants/dialogueConstants'
+import DotPulse from '../DotPulse'
+import {useParams} from 'react-router-dom'
+import {getDialogues, deleteDialogueRecords} from '../../actions/dialogueAction'
+
+// let chatDialogueSkip = 0
 
 const ChatTest = ({toggle, setToggle}) => {
-    const [dialogue, setDialogue] = useState([])
     const [content, setContent] = useState('')
+    const scrollDivToView = useRef(null)
+    const chatBodyScrollBar = useRef(null)
     const {channel} = useSelector(state => state.oneChannel)
-    const {loading, error, block} = useSelector(state => state.getDialogues)
+    const {loading, error, blocks} = useSelector(state => state.getDialogues)
+    const {loading:loading_bk, error:error_bk, block} = useSelector(state => state.dialogueBlock)
+    const dispatch = useDispatch()
+    const chatDispatch = useBlockDispatch()
+    const {allBlocks} = useBlockState()
+    const {id} = useParams()
     
     const chatStyle = {
         bottom:toggle ? '8rem': '3rem',
@@ -18,26 +32,46 @@ const ChatTest = ({toggle, setToggle}) => {
         visibility:toggle ? 'visible': 'hidden'
     }
 
-    const pushTextToChat = _ => {
-        setDialogue([...dialogue, {_id:ObjectID().toHexString() ,content}])
-        setContent('')
+    const displayOneDialogueBlock =_ => {
+        chatDispatch({type:CHAT_BLOCKS_ADD, payload:block})
+        dispatch({type: type.DIALOGUE_BLOCK_RESET})
     }
 
-    const pushTextToChatOnEnter = e => {
-        if(e.keycode === 13 || e.which === 13) {
-            pushTextToChat()
-            return
-        }
+    const displayDialogueBlocks = _ => {
+        chatDispatch({type:CHAT_BLOCKS_ADD, payload:blocks})
+        dispatch({type: type.DIALOGUE_CHECK_RESET})
     }
 
-    const resetChatHandler = _ => {
-        setDialogue([])
+    const scrollToBottomOnLoading = _ => {
+        scrollDivToView.current.scrollIntoView({behavior:'smooth'})
     }
+
+    const clearChatHandler = _ => {
+        dispatch(deleteDialogueRecords(id))
+    }
+
+    // if(chatBodyScrollBar.current){
+    //     chatBodyScrollBar.current.onscroll = () => {
+    //         const scroll = chatBodyScrollBar.current.scrollTop
+    //         if(scroll === 0) {
+    //             chatDialogueSkip += 5
+    //             dispatch(getDialogues(id, chatDialogueSkip))
+    //             console.log('Chat Body Scroll', chatDialogueSkip);
+    //         }
+    //     }
+    // }
+
+    useEffect(() => {
+        blocks ? displayDialogueBlocks() 
+        : block && displayOneDialogueBlock()
+        loading_bk && scrollToBottomOnLoading()
+// eslint-disable-next-line react-hooks/exhaustive-deps
+    },[blocks, block, loading_bk])
     return (
         <div className={style.test} style={chatStyle}>
            <div className={style.test__header}>
                <div className={style.test__option}>
-                   <span onClick={resetChatHandler}>
+                   <span onClick={clearChatHandler}>
                        <Icon name='refresh' />
                     </span>
                    <span onClick={() => setToggle(false)}>
@@ -49,25 +83,31 @@ const ChatTest = ({toggle, setToggle}) => {
                    <img src={channel && `/api/uploads/${channel.image}`} alt="channel name" />
                </div>
            </div>
-           <div className={style.test__body}>
-               {
-                   loading 
-                   ? <Loader size='20' center/>
-                   : error 
-                   ? <Alert variant='danger'>{error}</Alert>
-                   : block && <div className={style.test__dialogue}>
-                       {block.name}
-                   </div>
+           <div className={style.test__body} ref={chatBodyScrollBar}>
+               {loading 
+                ? <Loader size='20' center/>
+                : error 
+                && <Alert variant='danger'>{error}</Alert>}
+                {allBlocks 
+                && allBlocks.length > 0 
+                && allBlocks.map(b => <ChatTestBlock 
+                    key={b._id} 
+                    block={b} 
+                    />)
                }
+               {
+                   loading_bk ? <DotPulse/>
+                   : error_bk  && <Alert variant='danger'>{error_bk}</Alert>
+               }
+               <div ref={scrollDivToView}></div>
            </div>
            <div className={style.test__send}>
                 <input 
                 type="text" 
-                placeholder='start writing here....'
-                onKeyDown={(e) => pushTextToChatOnEnter(e)} 
+                placeholder='start typing....' 
                 onChange={({target:{value}}) => setContent(value)}
                 value={content}/>
-                <span  onClick={pushTextToChat}>
+                <span>
                     <Icon name='paper-plane'/>
                 </span>   
             </div> 
@@ -76,13 +116,15 @@ const ChatTest = ({toggle, setToggle}) => {
 }
 
 export default ChatTest
-
-
-// {dialogue.map((d, i) => (
-//     <div style={{direction: i%2 === 0 ? 'ltr' : 'rtl'}}
-//     className={style.test__dialogue} 
-//     key={d._id}>
-//          <img src={`/api/uploads/${channel.image}`} alt="avatar" />
-//          <p>{d.content}</p>
-//     </div>
-// ))}   
+// {
+    // loading 
+    // ? <Loader size='20' center/>
+//     : error 
+//     ? <Alert variant='danger'>{error}</Alert>
+//     : allBlocks.length > 0
+//     && allBlocks.map(b => <ChatTestBlock 
+//      key={b._id} 
+//      block={b} 
+//      setBlocks={setAllBlocks} 
+//      blocks={allBlocks}/>)
+// }

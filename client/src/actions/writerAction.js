@@ -164,3 +164,30 @@ export const deleteWriter = (id) => async (dispatch) => {
         })
     }
 }
+
+export const subscribeTOChannel = (id) => async (dispatch) => {
+    dispatch({type:type.WRITER_SUBSCRIBE_REQUEST})
+    try {
+        const {data} = await api.subscribe(id)
+        dispatch({type: type.WRITER_SUBSCRIBE_SUCCESS, payload:data.message})
+    } catch (error) {
+        dispatch({
+            type:type.WRITER_SUBSCRIBE_FAILURE,
+            payload:error.response && error.response.data.message 
+        })
+    }
+}
+
+export const unsubscribeTOChannel = (id) => async (dispatch) => {
+    dispatch({type:type.WRITER_UNSUBSCRIBE_REQUEST})
+    try {
+        const {data} = await api.unsubscribe(id)
+        dispatch({type: type.WRITER_UNSUBSCRIBE_SUCCESS, payload:data.message})
+    } catch (error) {
+        dispatch({
+            type:type.WRITER_UNSUBSCRIBE_FAILURE,
+            payload:error.response && error.response.data.message 
+        })
+    }
+}
+

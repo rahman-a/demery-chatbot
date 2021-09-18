@@ -42,7 +42,7 @@ export const isUserAuth = async(req, res, next) => {
                 res.status(401)
                 throw new Error('please login first')
             }
-            req.user = user 
+            req.user = user
             req.token = token 
             next()
         }else {

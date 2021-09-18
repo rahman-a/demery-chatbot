@@ -1,0 +1,79 @@
+@use '../../sass/variables' as gv;
+
+.dot {
+  position: relative;
+  left: -9999px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: gv.$yellow-50;
+  color: gv.$yellow-50;
+  box-shadow: 9999px 0 0 -5px gv.$yellow-50;
+  animation: dotPulse 1.5s infinite linear;
+  animation-delay: .25s;
+  margin: 2rem 0 1rem 2rem;
+  transform: translateX(13rem);
+  &::after,
+  &::before {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: gv.$yellow-50;
+    color: gv.$yellow-50;
+  }
+  &::before {
+    box-shadow: 9984px 0 0 -5px gv.$yellow-50;
+    animation: dotPulseBefore 1.5s infinite linear;
+    animation-delay: 0s;
+  }
+
+  &::after {
+    box-shadow: 10014px 0 0 -5px gv.$yellow-50;
+    animation: dotPulseAfter 1.5s infinite linear;
+    animation-delay: .5s;
+  }
+}
+
+@keyframes dotPulseBefore {
+    0% {
+      box-shadow: 9984px 0 0 -5px gv.$yellow-50;
+    }
+    30% {
+      box-shadow: 9984px 0 0 2px gv.$yellow-50;
+    }
+    60%,
+    100% {
+      box-shadow: 9984px 0 0 -5px gv.$yellow-50;
+    }
+  }
+
+@keyframes dotPulse {
+    0% {
+      box-shadow: 9999px 0 0 -5px gv.$yellow-50;
+    }
+    30% {
+      box-shadow: 9999px 0 0 2px gv.$yellow-50;
+    }
+    60%,
+    100% {
+      box-shadow: 9999px 0 0 -5px gv.$yellow-50;
+    }
+}
+
+@keyframes dotPulseAfter {
+    0% {
+      box-shadow: 10014px 0 0 -5px gv.$yellow-50;
+    }
+    30% {
+      box-shadow: 10014px 0 0 2px gv.$yellow-50;
+    }
+    60%,
+    100% {
+      box-shadow: 10014px 0 0 -5px gv.$yellow-50;
+    }
+}
+

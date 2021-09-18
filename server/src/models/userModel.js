@@ -102,6 +102,18 @@ userSchema.methods.toAuthJSON = function() {
     return data
 }
 
+userSchema.methods.subscribe = async function(channelId){
+    if(!(this.channels.includes(channelId))){
+        this.channels = this.channels.concat(channelId)
+        await this.save()
+    }
+}
+
+userSchema.methods.unsubscribe = async function(channelId){
+    this.channels = this.channels.filter(channel => channel._id !== channelId )
+    await this.save()
+}
+
 userSchema.pre('save', async function(next){
     if(this.isModified('password')) {
         this.password = await bcrypt.hash(this.password, 10)

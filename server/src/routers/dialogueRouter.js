@@ -3,12 +3,14 @@ const router  = express.Router()
 
 import {
     getUserDialogue,
-    getOneBlock
+    getOneBlock,
+    deleteRecords
 } from '../controllers/dialogueControllers.js'
 
 import {isAuth} from '../middleware/auth.js'
 
-router.post('/', isAuth, getUserDialogue)
-router.get('/block/:id', isAuth,getOneBlock)
+router.get('/:channelId', isAuth, getUserDialogue)
+router.get('/block/:blockId/:channelId', isAuth,getOneBlock)
+router.delete('/:channelId', isAuth, deleteRecords)
 
 export default router

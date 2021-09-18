@@ -3,22 +3,26 @@ import Block from "../models/blockModel.js";
 
 
 export const getUserDialogue = async (req, res, next) => {
-    const {channelId, writerId} = req.body 
+    const {channelId} = req.params
+    const {skip} = req.query
     try {
-        const dialogues = await Dialogue.find({channel:channelId, user:writerId})
+        const dialogues = await Dialogue.find({channel:channelId, user:req.writer._id})
+        // .sort({_id:-1}).skip(parseInt(skip)).limit(5)
         if(!dialogues || dialogues.length === 0){
-            const block = await Block.findOne({role:'init'})
+            const block = await Block.findOne({role:'init', channel:channelId})
+            if(!block) throw new Error('No Dialogues Found, start creating your blocks')
             const newDialogue  = new Dialogue({
                 channel:channelId,
-                user:writerId,
+                user:req.writer._id,
                 response:block._id
             })
             await newDialogue.save()
-            res.send({block})
+            res.send({blocks:[block]})
         }else {
-            const dialogue = dialogues[dialogues.length - 1]
-            const block = await Block.findOne({_id:dialogue.response})
-            res.send({block})
+            const blocks = await Promise.all(dialogues.map(async dialogue => {
+                return await Block.findById(dialogue.response)
+            }))
+            res.send({blocks})
         }
     } catch (error) {
         next(error)
@@ -26,14 +30,30 @@ export const getUserDialogue = async (req, res, next) => {
 }
 
 export const getOneBlock = async (req, res, next) =>{
-    const {id} = req. params 
+    const {blockId, channelId} = req.params 
     try {
-        const block = await Block.findById(id)
+        const block = await Block.findById(blockId)
         if(!block){
-            res.status(404)
-            throw new Error('No Block Found')
+                res.status(404)
+                throw new Error('No Block Found')
         }
+        const newDialogue  = new Dialogue({
+            channel:channelId,
+            user:req.writer._id,
+            response:blockId
+        })
+        await newDialogue.save()
         res.send({block})
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const deleteRecords = async(req, res, next) => {
+    const {channelId} = req.params 
+    try {
+        await Dialogue.deleteMany({channel:channelId, user:req.writer._id})
+        res.status(204).send()
     } catch (error) {
         next(error)
     }

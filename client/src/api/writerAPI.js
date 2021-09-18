@@ -39,6 +39,12 @@ const service = {
     },
     writerDelete(id){
         return api().delete(`writers/delete/${id}`)
+    },
+    subscribe(channelId){
+        return api().patch('writers/subscribe', {channelId})
+    },
+    unsubscribe(channelId){
+        return api().patch('writers/unsubscribe', {channelId})
     }
 }
 

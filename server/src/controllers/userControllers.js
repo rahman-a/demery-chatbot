@@ -1,5 +1,7 @@
 import Channel from '../models/channelModel.js'
 import User from '../models/userModel.js'
+import Dialogue from '../models/dialogueModel.js'
+import Block from '../models/blockModel.js'
 
 export const createNewUser = async(req, res, next) => {
     const {email, userName} = req.body 
@@ -88,9 +90,6 @@ export const getAllUser = async(req, res, next) => {
                 res.status(404)
                 throw new Error('No Users Found')
             }
-            // writers = allWriters.map(writer => {
-            //     return {id:writer._id, name:writer.fullName}
-            // })
         }else {
             users = await User.find({}) 
             if(!users || users.length === 0){
@@ -211,6 +210,84 @@ export const listAllChannels = async (req, res, next) => {
             throw new Error('No Channels Found')
         }
         res.send({channels})       
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const subscribeToChannel = async (req, res, next) => {
+    const {channelId} = req.body 
+    try {
+        await req.user.subscribe(channelId)
+        await req.user.save()
+        res.send({message:'Subscription has been Confirmed'})
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const unsubscribeToChannel = async (req, res, next) => {
+    const {channelId} = req.body 
+    try {
+        await req.user.unsubscribe(channelId)
+        await req.user.save()
+        res.send({message:'UnSubscription has been Confirmed'})
+    } catch (error) {
+        next(error)
+    }
+}
+
+// user dialogues controllers
+export const getUserDialogue = async (req, res, next) => {
+    const {channelId} = req.params 
+    try {
+        const dialogues = await Dialogue.find({channel:channelId, user:req.user._id})
+        if(!dialogues || dialogues.length === 0){
+            const block = await Block.findOne({role:'init', channel:channelId})
+            if(!block) throw new Error('No Dialogues Found, start creating your blocks')
+            const newDialogue  = new Dialogue({
+                channel:channelId,
+                user:req.user._id,
+                response:block._id
+            })
+            await newDialogue.save()
+            res.send({blocks:[block]})
+        }else {
+            const blocks = await Promise.all(dialogues.map(async dialogue => {
+                return await Block.findById(dialogue.response)
+            }))
+            res.send({blocks})
+        }
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const getOneBlock = async (req, res, next) =>{
+    const {blockId, channelId} = req.params 
+    try {
+        const block = await Block.findById(blockId)
+        if(!block){
+                res.status(404)
+                throw new Error('No Block Found')
+        }
+        const newDialogue  = new Dialogue({
+            channel:channelId,
+            user:req.user._id,
+            response:blockId
+        })
+        await newDialogue.save()
+        res.send({block})
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const deleteRecords = async(req, res, next) => {
+    const {channelId} = req.params 
+    try {
+        await Dialogue.deleteMany({channel:channelId, user:req.user._id})
+        res.status(204).send()
     } catch (error) {
         next(error)
     }

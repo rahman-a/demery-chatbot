@@ -216,18 +216,28 @@ export const listAllChannels = async (req, res, next) => {
     }
 }
 
-
-export const isClientAuthorized = async (req, res, next) => {
+export const subscribeToChannel = async (req, res, next) => {
+    const {channelId} = req.body 
     try {
-        if(req.cookies['tk.id']) {
-            res.status(200).send({isAuth:true})
-        }else {
-            res.status(200).send({isAuth:false})
-        }       
+        await req.writer.subscribe(channelId)
+        await req.writer.save()
+        res.send({message:'Subscription has been Confirmed'})
     } catch (error) {
         next(error)
     }
 }
+
+export const unsubscribeToChannel = async (req, res, next) => {
+    const {channelId} = req.body 
+    try {
+        await req.writer.unsubscribe(channelId)
+        await req.writer.save()
+        res.send({message:'UnSubscription has been Confirmed'})
+    } catch (error) {
+        next(error)
+    }
+}
+
 
 function expireAt(day) { 
     const today = new Date()

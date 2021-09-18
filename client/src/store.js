@@ -2,6 +2,7 @@ import {createStore, combineReducers, applyMiddleware} from 'redux'
 import thunk from 'redux-thunk'
 import {composeWithDevTools} from 'redux-devtools-extension'
 
+// Writer Reducer
 import {
     loginReducer,
     writerCreateReducer,
@@ -12,9 +13,12 @@ import {
     writerAccessReducer,
     listWritersReducer,
     writerInfoByIdReducer,
-    writerDeleteReducer
+    writerDeleteReducer,
+    writerSubscribeReducer,
+    writerUnsubscribeReducer
 } from './reducers/writerReducer'
 
+// Channel Reducer
 import {
     createChannelReducer,
     getChannelReducer,
@@ -22,6 +26,7 @@ import {
     deleteChannelReducer
 } from './reducers/channelReducer'
 
+// Block Reducer 
 import {
     createBlockReducer,
     ListBlocksReducer,
@@ -29,10 +34,14 @@ import {
     deleteBlockReducer
 } from './reducers/blockReducer'
 
+// Dialogue Reducer
 import {
-    getDialoguesReducer
+    getDialoguesReducer,
+    getDialogueBlock,
+    deleteDialogueRecords
 } from './reducers/dialogueReducer'
 
+// Main Reducer
 const reducer = combineReducers({
     // Writer Reducer
     writer:loginReducer,
@@ -45,6 +54,8 @@ const reducer = combineReducers({
     access:writerAccessReducer,
     infoById:writerInfoByIdReducer,
     delete:writerDeleteReducer,
+    subscribe:writerSubscribeReducer,
+    unsubscribe:writerUnsubscribeReducer,
 
     // Channel Reducer
     channel:createChannelReducer,
@@ -60,6 +71,8 @@ const reducer = combineReducers({
     
     // Dialogue Reducer
     getDialogues:getDialoguesReducer,
+    dialogueBlock:getDialogueBlock,
+    deleteRecords:deleteDialogueRecords,
 })
 
 

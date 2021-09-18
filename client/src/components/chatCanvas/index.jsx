@@ -3,10 +3,12 @@ import style from './chatCanvas.module.scss'
 import ObjectId from 'bson-objectid'
 import ChatBlock from '../chatBlock'
 import {useChatOpsDispatch, useChatOpsState} from '../../context/blockOps'
+import {useBlockDispatch} from '../../context/blockData'
 import {CHAT_OPS_CREATE, 
     CHAT_OPS_DELETE,
      CHAT_OPS_REMOVE_GALLERY_BLOCK ,
-     CHAT_OPS_RESET
+     CHAT_OPS_RESET,
+     CHAT_BLOCKS_RESET
 } from '../../context/actionTypes'
 import Icon from '../icons'
 import ChatTest from '../chatTest'
@@ -19,11 +21,13 @@ const ChatCanvas = () => {
     const [collectGalleryData, setCollectGalleryData] = useState([])
     const [galleryName, setGalleryName] = useState('')
     const {blocks} = useSelector(state => state.blocks)
-    const {writer} = useSelector(state => state.info)
     const [isChatBlock, setIsChatBlock] = useState(false)
     const [actionBlocks, setActionBlocks] = useState([])
+    const [dialoguesInit, setDialoguesInit] = useState(true)
+    const {isDeleted} = useSelector(state => state.deleteRecords)
     const {blockOps} = useChatOpsState()
     const dispatch = useChatOpsDispatch()
+    const blockDispatch = useBlockDispatch()
     const dialogueDispatch = useDispatch()
     const {id} = useParams()
     
@@ -71,7 +75,10 @@ const ChatCanvas = () => {
 
         const startDialogueHandler = _ => {
             setIsChatBlock(!isChatBlock)
-            !isChatBlock && dialogueDispatch(getDialogues({channelId:id, writerId:writer._id}))
+            setDialoguesInit(false)
+            if(dialoguesInit) {
+                dialogueDispatch(getDialogues(id, 0))
+            }
         }
 
     useEffect(() => {
@@ -89,7 +96,12 @@ const ChatCanvas = () => {
                 setActionBlocks(blocks)
             }
         }
-    },[blockOps, blocks])
+        if(isDeleted) {
+            dialogueDispatch(getDialogues(id, 0))
+            blockDispatch({type: CHAT_BLOCKS_RESET})
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[blockOps, blocks, isDeleted])
     return (
         <div className={style.chatCanvas}>
             <ChatTest toggle={isChatBlock} setToggle={setIsChatBlock}/>

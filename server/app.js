@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import morgan from 'morgan'
-// import helmet from 'helmet'
+import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 import connectDB from './src/dbConnection.js'
 import {notFound, errorHandler} from './src/middleware/errorHandler.js'
@@ -22,7 +22,7 @@ connectDB()
 app.use(cors())
 app.use(express.json())
 app.use(morgan('dev'))
-// app.use(helmet())
+app.use(helmet())
 app.use(cookieParser())
 app.use('/api/writers', writerRouter)
 app.use('/api/channels', channelRouter)
@@ -33,7 +33,7 @@ app.use('/api/uploads', express.static(path.resolve(__dirname, './uploads')))
 if(process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, '../client/build')))
     app.get('*', (req, res) => {
-        res.set("Content-Security-Policy", "default-src:'self';", "script-src: 'self'")
+        res.set("Content-Security-Policy","script-src: 'self'")
         res.sendFile(path.resolve(__dirname, '../client/build/index.html'))
     })
 }

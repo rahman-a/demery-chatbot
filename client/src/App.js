@@ -1,4 +1,3 @@
-import {useEffect} from 'react'
 import Login from "./views/login";
 import Home from './views/Home'
 import Profile from "./views/Profile";
@@ -7,6 +6,7 @@ import Writers from './views/Writers';
 import Info from './views/Info'
 import {Switch, Route, Redirect} from 'react-router-dom'
 import {useSelector} from 'react-redux'
+import {ChatBlockProvider} from './context/blockData'
 
 
 function App() {
@@ -18,16 +18,20 @@ function App() {
           <Login/>
         </Route>
         <Route path='/home'>
-          {isAuth ? <Home/> : <Redirect to='?redirect=home'/>}
+          {isAuth ? <Home/> : <Redirect to='/'/>}
         </Route>
         <Route path='/profile'>
-          {isAuth ? <Profile/> : <Redirect to='?redirect=profile'/>}
+          {isAuth ? <Profile/> : <Redirect to='/'/>}
         </Route>
         <Route path='/info/:id'>
-          {isAuth ? <Info/> : <Redirect to='?redirect=info'/>}
+          {isAuth ? <Info/> : <Redirect to='/'/>}
         </Route>
         <Route path='/dashboard/:id'>
-          {isAuth ? <Dashboard/> :  <Redirect to='?redirect=dashboard'/>}
+          {isAuth 
+          ? <ChatBlockProvider>
+              <Dashboard/> 
+            </ChatBlockProvider> 
+          :  <Redirect to='/'/>}
         </Route>
         <Route path='/writers'>
           {isAuth ? <Writers/> :  <Redirect to='?redirect=writers'/>}

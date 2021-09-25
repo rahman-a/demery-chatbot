@@ -8,19 +8,22 @@ import ChatTestBlock from './chatTestBlock'
 import {useBlockDispatch, useBlockState} from '../../context/blockData'
 import {CHAT_BLOCKS_ADD} from '../../context/actionTypes'
 import {type} from '../../constants/dialogueConstants'
+import {type as timedBlock} from '../../constants/timedBlockConstants'
 import DotPulse from '../DotPulse'
 import {useParams} from 'react-router-dom'
-import {getDialogues, deleteDialogueRecords} from '../../actions/dialogueAction'
-
+import {deleteDialogueRecords} from '../../actions/dialogueAction'
+import {listTimedBlock} from '../../actions/timedBlocksAction'
+import Notify from '../../sound/notify.mp3'
 // let chatDialogueSkip = 0
 
-const ChatTest = ({toggle, setToggle}) => {
+const ChatTest = ({toggle, setToggle, setChatNotification, dialoguesInit}) => {
     const [content, setContent] = useState('')
     const scrollDivToView = useRef(null)
     const chatBodyScrollBar = useRef(null)
     const {channel} = useSelector(state => state.oneChannel)
     const {loading, error, blocks} = useSelector(state => state.getDialogues)
     const {loading:loading_bk, error:error_bk, block} = useSelector(state => state.dialogueBlock)
+    const {blocks:timedBlocks} = useSelector(state => state.timedBlocks)
     const dispatch = useDispatch()
     const chatDispatch = useBlockDispatch()
     const {allBlocks} = useBlockState()
@@ -37,36 +40,52 @@ const ChatTest = ({toggle, setToggle}) => {
         dispatch({type: type.DIALOGUE_BLOCK_RESET})
     }
 
+    const playNotificationSound = _ => {
+        console.log('play sound');
+        const audio = new Audio(Notify)
+        audio.play()
+    }
+    
     const displayDialogueBlocks = _ => {
-        chatDispatch({type:CHAT_BLOCKS_ADD, payload:blocks})
-        dispatch({type: type.DIALOGUE_CHECK_RESET})
+        if(blocks) {
+            chatDispatch({type:CHAT_BLOCKS_ADD, payload:blocks})
+            dispatch({type: type.DIALOGUE_CHECK_RESET})
+        }else if(timedBlocks) {
+            !dialoguesInit && chatDispatch({type:CHAT_BLOCKS_ADD, payload:timedBlocks})
+            setChatNotification(prev => prev + timedBlocks.length)
+            playNotificationSound()
+            dispatch({type: timedBlock.LIST_TIMED_BLOCK_RESET})
+
+        }
     }
 
     const scrollToBottomOnLoading = _ => {
         scrollDivToView.current.scrollIntoView({behavior:'smooth'})
+        
     }
-
     const clearChatHandler = _ => {
         dispatch(deleteDialogueRecords(id))
     }
 
-    // if(chatBodyScrollBar.current){
-    //     chatBodyScrollBar.current.onscroll = () => {
-    //         const scroll = chatBodyScrollBar.current.scrollTop
-    //         if(scroll === 0) {
-    //             chatDialogueSkip += 5
-    //             dispatch(getDialogues(id, chatDialogueSkip))
-    //             console.log('Chat Body Scroll', chatDialogueSkip);
-    //         }
+    
+
+    // useEffect(() => {
+    //     const body = chatBodyScrollBar.current
+    //     body.onscroll = () => {
+    //         if(body.scrollTop === 0) console.log('Scroll to top');
     //     }
-    // }
+    // }, [chatBodyScrollBar])
 
     useEffect(() => {
-        blocks ? displayDialogueBlocks() 
+        (blocks || timedBlocks) ? displayDialogueBlocks() 
         : block && displayOneDialogueBlock()
         loading_bk && scrollToBottomOnLoading()
+        const interval = setInterval(() => {
+            dispatch(listTimedBlock(id))
+        }, 1000 * 30)
+        return () => clearInterval(interval)
 // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[blocks, block, loading_bk])
+    },[blocks, block, loading_bk, timedBlocks])
     return (
         <div className={style.test} style={chatStyle}>
            <div className={style.test__header}>

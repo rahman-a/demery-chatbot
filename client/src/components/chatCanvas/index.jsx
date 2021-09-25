@@ -3,33 +3,21 @@ import style from './chatCanvas.module.scss'
 import ObjectId from 'bson-objectid'
 import ChatBlock from '../chatBlock'
 import {useChatOpsDispatch, useChatOpsState} from '../../context/blockOps'
-import {useBlockDispatch} from '../../context/blockData'
 import {CHAT_OPS_CREATE, 
     CHAT_OPS_DELETE,
      CHAT_OPS_REMOVE_GALLERY_BLOCK ,
-     CHAT_OPS_RESET,
-     CHAT_BLOCKS_RESET
+     CHAT_OPS_RESET
 } from '../../context/actionTypes'
-import Icon from '../icons'
-import ChatTest from '../chatTest'
-import { useSelector, useDispatch } from 'react-redux'
-import { useParams } from 'react-router'
-import {getDialogues} from '../../actions/dialogueAction'
+import { useSelector } from 'react-redux'
 
 const ChatCanvas = () => {
     const [galleryBlocks, setGalleryBlocks] = useState([])
     const [collectGalleryData, setCollectGalleryData] = useState([])
     const [galleryName, setGalleryName] = useState('')
     const {blocks} = useSelector(state => state.blocks)
-    const [isChatBlock, setIsChatBlock] = useState(false)
     const [actionBlocks, setActionBlocks] = useState([])
-    const [dialoguesInit, setDialoguesInit] = useState(true)
-    const {isDeleted} = useSelector(state => state.deleteRecords)
     const {blockOps} = useChatOpsState()
     const dispatch = useChatOpsDispatch()
-    const blockDispatch = useBlockDispatch()
-    const dialogueDispatch = useDispatch()
-    const {id} = useParams()
     
         const createNewBlockHandler = (e, block) => {
             const type = e.target.textContent 
@@ -73,14 +61,6 @@ const ChatCanvas = () => {
            setGalleryName('')
         }
 
-        const startDialogueHandler = _ => {
-            setIsChatBlock(!isChatBlock)
-            setDialoguesInit(false)
-            if(dialoguesInit) {
-                dialogueDispatch(getDialogues(id, 0))
-            }
-        }
-
     useEffect(() => {
         if(blockOps) {
             setGalleryBlocks(blockOps.filter(b => b.gallery?.length))
@@ -96,20 +76,10 @@ const ChatCanvas = () => {
                 setActionBlocks(blocks)
             }
         }
-        if(isDeleted) {
-            dialogueDispatch(getDialogues(id, 0))
-            blockDispatch({type: CHAT_BLOCKS_RESET})
-        }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[blockOps, blocks, isDeleted])
+    },[blockOps, blocks])
     return (
         <div className={style.chatCanvas}>
-            <ChatTest toggle={isChatBlock} setToggle={setIsChatBlock}/>
-            <div className={style.chatCanvas__chat}>
-                <span onClick={startDialogueHandler}>
-                    <Icon name='chat-test'/>
-                </span>
-            </div>
             <ul className={style.chatCanvas__create}>
                 {/* <li onClick={(e) => createNewBlockHandler(e)}>Text</li> */}
                 <li onClick={(e) => createNewBlockHandler(e)}>Interactive</li>

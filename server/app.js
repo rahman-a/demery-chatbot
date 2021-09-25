@@ -10,6 +10,7 @@ import writerRouter from './src/routers/writerRouter.js'
 import channelRouter from './src/routers/channelRouter.js'
 import dialogueRouter from './src/routers/dialogueRouter.js'
 import blockRouter from './src/routers/blockRouter.js'
+import timedRouter from './src/routers/timedRouter.js'
 import {fileURLToPath} from 'url'
 import path from 'path' 
 
@@ -27,6 +28,7 @@ app.use('/api/writers', writerRouter)
 app.use('/api/channels', channelRouter)
 app.use('/api/blocks', blockRouter)
 app.use('/api/dialogues', dialogueRouter)
+app.use('/api/timed', timedRouter)
 app.use('/api/uploads', express.static(path.resolve(__dirname, './uploads')))
 app.use(notFound)
 app.use(errorHandler)

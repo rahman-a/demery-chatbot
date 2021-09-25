@@ -1,0 +1,30 @@
+@use '../../sass/variables' as gv;
+
+.timed {
+    &__nav {
+        width: calc(100vw - 40rem);
+        display: flex;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+    &__list {
+        display: flex;
+        width: 50%;
+        justify-content: space-between;
+        background-color: gv.$yellow-50;
+        padding: 0;
+        text-align: center;
+        transform:translateX(-6.5rem);
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+    &__item {
+        padding: 0.5rem;
+        color: gv.$white;
+        width: 33.33%;
+        cursor: pointer;
+        &:hover {
+            background-color: darken(gv.$yellow-50, 5%);
+        }
+    }
+}

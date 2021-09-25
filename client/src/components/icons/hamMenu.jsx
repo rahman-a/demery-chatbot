@@ -33,16 +33,16 @@ const HamMenu = ({width, height, className, eventHandler}) => {
     </filter>
   </defs>
   <g id="Group_27" data-name="Group 27" transform="translate(-132 -99)">
-    <rect id="Rectangle_19" data-name="Rectangle 19" width="43" height="28" transform="translate(133 99)" fill="#fff"/>
+    <rect id="Rectangle_19" data-name="Rectangle 19" width="43" height="28" transform="translate(133 99)" fill='transparent'/>
     <g id="Group_24" data-name="Group 24" transform="translate(113 78.831)">
       <g transform="matrix(1, 0, 0, 1, 19, 20.17)" filter="url(#Line_9)">
-        <line id="Line_9-2" data-name="Line 9" x2="35.828" transform="translate(4.5 4.33)" fill="none" stroke="#808e06" strokeLinecap="round" strokeWidth="1"/>
+        <line id="Line_9-2" data-name="Line 9" x2="35.828" transform="translate(4.5 4.33)" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="1"/>
       </g>
       <g transform="matrix(1, 0, 0, 1, 19, 20.17)" filter="url(#Line_10)">
-        <line id="Line_10-2" data-name="Line 10" x2="35.828" transform="translate(4.5 14.33)" fill="none" stroke="#808e06" strokeLinecap="round" strokeWidth="1"/>
+        <line id="Line_10-2" data-name="Line 10" x2="35.828" transform="translate(4.5 14.33)" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="1"/>
       </g>
       <g transform="matrix(1, 0, 0, 1, 19, 20.17)" filter="url(#Line_11)">
-        <line id="Line_11-2" data-name="Line 11" x2="35.828" transform="translate(4.5 24.33)" fill="none" stroke="#808e06" strokeLinecap="round" strokeWidth="1"/>
+        <line id="Line_11-2" data-name="Line 11" x2="35.828" transform="translate(4.5 24.33)" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="1"/>
       </g>
     </g>
   </g>

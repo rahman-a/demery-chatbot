@@ -20,8 +20,8 @@ const Navbar = ({dashboard, toggleHandler}) => {
     return (
         <div className={style.navbar}>
             {dashboard 
-            && <span onClick={toggleHandler}>
-                <Icon name='ham-menu' width='50' height='50' className={style.navbar__ham}/>
+            && <span onClick={toggleHandler} className={style.navbar__ham}>
+                <Icon name='ham-menu' width='50' height='50' className={style.navbar__ham_icon}/>
             </span>}
             <div className='container'>
                 <div className={style.navbar__wrapper}>

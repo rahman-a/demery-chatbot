@@ -42,6 +42,7 @@ export const listBlocks = (id, keyword) => async (dispatch) => {
     }
 }
 
+
 export const deleteBlock = (id) => async (dispatch) => {
     dispatch({type: type.BLOCK_DELETE_REQUEST})
     try {

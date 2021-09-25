@@ -40,6 +40,7 @@ export const ListBlocksReducer = (state, action) => {
     }
 }
 
+
 export const deleteBlockReducer = (state, action) => {
     switch(action.type){
         case type.BLOCK_DELETE_REQUEST: 

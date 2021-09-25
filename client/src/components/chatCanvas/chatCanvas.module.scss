@@ -81,18 +81,18 @@
         }
         
     }
-    &__chat {
-        position: fixed;
-        bottom:2rem;
-        right:4rem;
-        z-index:9999999;
-        span {
-            cursor: pointer;
-        }
-        svg {
-            width:5rem;
-            height: 5rem;
-            fill: gv.$yellow-50;
-        }
-    }
+    // &__chat {
+    //     position: fixed;
+    //     bottom:2rem;
+    //     right:4rem;
+    //     z-index:9999999;
+    //     span {
+    //         cursor: pointer;
+    //     }
+    //     svg {
+    //         width:5rem;
+    //         height: 5rem;
+    //         fill: gv.$yellow-50;
+    //     }
+    // }
 }

@@ -25,7 +25,9 @@ export const createBlock = async (req, res, next) => {
 export const editBlock = async(req, res, next) => {
     const blockData = req.body 
     blockData.buttons = JSON.parse(blockData.buttons)
-    blockData.image = req.fileName
+    blockData.image = typeof blockData.image === 'string' 
+    ?  blockData.image 
+    : req.fileName
     try {
         const block = await Block.findById(blockData._id) 
         if(!block){

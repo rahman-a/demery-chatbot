@@ -23,6 +23,7 @@ const BlockCTS = ({
     const [action, setAction] = useState(null)
     const [btnTitle, setBtnTitle] = useState('')
     const [alert, setAlert] = useState('')
+    const [actionLists, setActionLists] = useState([])
     const {blocks} = useSelector(state => state.blocks)
     const listRef = useRef(null)
     const callRef = useRef(null)
@@ -110,7 +111,8 @@ const BlockCTS = ({
         // sendBtnData()
         btnTitle && sendActionHandler()
        !btnTitle && setIncomingDataForEdit()
-    },[btnTitle])
+       actionBlocks && setActionLists(actionBlocks)
+    },[btnTitle, actionBlocks])
 
     return (
         <div className={style.cta}>
@@ -152,19 +154,10 @@ const BlockCTS = ({
                     || actionType === 'Unsubscribe')
                     ? <DropdownMenu className={style.cta__blocks} 
                     placeholder='choose the block' 
-                    value={action&&action.name}>
-                        {actionBlocks && actionBlocks.map(block => (
-                            <li 
-                            key={block._id}
-                            onClick={() => {
-                                    setAction({name:block.name, _id:block._id})
-                                    sendActionHandler(block._id)
-                                    setSaveGBlock(true)
-                                }}>
-                                {block.name}
-                            </li>
-                        ))}
-                        </DropdownMenu>
+                    value={action&&action.name} list={actionLists}
+                    setAction={setAction}
+                    sendActionHandler={sendActionHandler}
+                    setSaveGBlock={setSaveGBlock}/>
                     :<div className={style.cta__input}>
                         <input
                         onChange={(e) => setAction(e.target.value)}

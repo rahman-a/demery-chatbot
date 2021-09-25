@@ -1,3 +1,34 @@
+@use '../../sass/variables' as gv;
+
 .dashboard {
     display: flex;
+    &__chat {
+        position: fixed;
+        bottom:2rem;
+        right:4rem;
+        z-index:9999999;
+        &_icon {
+            cursor: pointer;
+            position: relative;
+        }
+        svg {
+            width:5rem;
+            height: 5rem;
+            fill: gv.$yellow-50;
+        }
+        &_notification {
+            position: absolute;
+            top:-1.5rem;
+            right:-0.5rem;
+            background-color: #b70101;
+            color:gv.$white;
+            width:fit-content;
+            height: fit-content;
+            clip-path: circle();
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.32rem;
+        }
+    }
 }

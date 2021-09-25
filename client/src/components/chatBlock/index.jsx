@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from 'react'
+import React, {useState,useEffect, useRef} from 'react'
 import style from './chatBlock.module.scss'
 import BlockCTS from '../blockCTA'
 import Icon from '../icons'
@@ -52,11 +52,15 @@ const ChatBlock = ({
     const blockDispatch = useDispatch()
     const {channel} = useSelector(state => state.oneChannel)
     const {loading, error} = useSelector(state => state.newBlock)
+    const [draggable, setDraggable] = useState(true)
+    const blockRef = useRef(null)
     const moveChatBlock = useDrag(params => {
         setBlockPos({
             x:params.offset[0],
             y:params.offset[1]
         })
+    },{
+        enabled:draggable ? true : false
     })
     
     const langChangeHandler = _ => {
@@ -182,6 +186,7 @@ const ChatBlock = ({
             role: initOn ? 'init':'',
             abbr:allAbbr[type]
         }
+        console.log('ChatData', chatData);
         for(let key in chatData) {
             switch(type) {
                 case 'Text':
@@ -219,6 +224,8 @@ const ChatBlock = ({
             setCTAs(data.buttons)
             setActionBtns(data.buttons)
             setBlockData(data)
+            data.role === 'init' && setInitOn(true)
+            data.image && setImageSRC(`/api/uploads/${data.image}`)
         }
     },[data,blocks,galleryName])
 
@@ -235,8 +242,10 @@ const ChatBlock = ({
         {...moveChatBlock()}
         style={{
             top:blockPos.y > - 20 ? blockPos.y : -20,
-            left:blockPos.x > - 15 ? blockPos.x : -15
-        }}>
+            left:blockPos.x > - 15 ? blockPos.x : -15,
+            touchAction:'none'
+        }}
+        ref={blockRef} onMouseMove={(e) =>  false}>
            <BlockAlert alert={alert} setAlert={setAlert}/>
            <div className={style.chatBlock__name} >
                <input 
@@ -291,8 +300,13 @@ const ChatBlock = ({
                    </span>
                    <p
                    onClick={() => setInitOn(!initOn)}
-                   className={`${style.chatBlock__init} ${initOn ? style.chatBlock__init_on : ''}`}>
+                   className={`${style.chatBlock__init} ${initOn  ? style.chatBlock__init_on : ''}`}>
                        INIT
+                    </p>
+                    <p
+                   onClick={() => setDraggable(!draggable)}
+                   className={`${style.chatBlock__cancel} ${draggable  ? style.chatBlock__cancel_on : ''}`}>
+                       DRAG
                     </p>
                    { data.type === 'Gallery' 
                     && saveGBlock &&
@@ -320,9 +334,7 @@ const ChatBlock = ({
                            <input type="file" id={`upload-${idx}`} 
                            onChange={(e) => getBlockDataHandler(e)}/>
                        </div>
-                       <img src={data && data.image && (data.abbr === 'CD' || data.abbr === 'GL') 
-                       ? `/api/uploads/${data.image}` 
-                       :imageSRC} 
+                       <img src={imageSRC} 
                        alt="preview"/>
                    </figure>}
 
@@ -337,7 +349,8 @@ const ChatBlock = ({
 
                    <div className={style.chatBlock__desc}>
                        <textarea 
-                       name='content' 
+                       name='content'
+                       style={{minHeight:'8rem'}}
                        placeholder={isAR ? 'اكتب المحتوى هنا' :'write the content'}
                        defaultValue={data && !(data.abbr === 'TX') ? data.content: ''}
                        onChange={(e) => getBlockDataHandler(e)}></textarea>

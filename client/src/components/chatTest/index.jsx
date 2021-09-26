@@ -135,15 +135,3 @@ const ChatTest = ({toggle, setToggle, setChatNotification, dialoguesInit}) => {
 }
 
 export default ChatTest
-// {
-    // loading 
-    // ? <Loader size='20' center/>
-//     : error 
-//     ? <Alert variant='danger'>{error}</Alert>
-//     : allBlocks.length > 0
-//     && allBlocks.map(b => <ChatTestBlock 
-//      key={b._id} 
-//      block={b} 
-//      setBlocks={setAllBlocks} 
-//      blocks={allBlocks}/>)
-// }

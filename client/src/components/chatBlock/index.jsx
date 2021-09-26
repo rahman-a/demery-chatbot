@@ -15,6 +15,7 @@ import { useSelector,useDispatch } from 'react-redux'
 import {useParams} from 'react-router-dom'
 import {createBlock, editBlock} from '../../actions/blockAction'
 import Loader from '../Loader'
+import Editor from '../textEditor'
 
 const ChatBlock = ({
     blocks, 
@@ -106,7 +107,7 @@ const ChatBlock = ({
                 }
                 const image = e.target.files[0]
                 setBlockData({...blockData,image})
-            }else {
+            }else {     
                 const inputData = {[e.target.name] : e.target.value}
                 setBlockData({...blockData,...inputData})
             }
@@ -138,6 +139,7 @@ const ChatBlock = ({
                         abbr:'GL',
                         creator:writer._id,
                         channel:id,
+                        isArabic:isAR,
                         gallery:collectGalleryData
                     }
                     // blockDispatch({type:CHAT_BLOCK_CREATE, payload:galleryData})
@@ -183,6 +185,7 @@ const ChatBlock = ({
             type,
             creator:writer._id,
             channel:id,
+            isArabic:isAR,
             role: initOn ? 'init':'',
             abbr:allAbbr[type]
         }
@@ -218,6 +221,7 @@ const ChatBlock = ({
         }
         return chatData
     }
+
 
     useEffect(() => {
         if(data.buttons) { 
@@ -353,7 +357,9 @@ const ChatBlock = ({
                        style={{minHeight:'8rem'}}
                        placeholder={isAR ? 'اكتب المحتوى هنا' :'write the content'}
                        defaultValue={data && !(data.abbr === 'TX') ? data.content: ''}
-                       onChange={(e) => getBlockDataHandler(e)}></textarea>
+                       onChange={(e) => getBlockDataHandler(e)}
+                       ></textarea>
+                       {/* <Editor/> */}
                    </div>
 
                    <div className={style.chatBlock__btns}>

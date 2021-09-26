@@ -4,10 +4,10 @@ import Block from "../models/blockModel.js";
 
 export const getUserDialogue = async (req, res, next) => {
     const {channelId} = req.params
-    const {skip} = req.query
+    // const {skip} = req.query
     try {
         const dialogues = await Dialogue.find({channel:channelId, user:req.writer._id})
-        .sort({createdAt:-1}).skip(parseInt(skip)).limit(10)
+        // .sort({createdAt:-1}).skip(parseInt(skip)).limit(10)
         if(!dialogues || dialogues.length === 0){
             const block = await Block.findOne({role:'init', channel:channelId})
             if(!block) throw new Error('No Dialogues Found, start creating your blocks')
@@ -19,7 +19,7 @@ export const getUserDialogue = async (req, res, next) => {
             await newDialogue.save()
             res.send({blocks:[block]})
         }else {
-            const blocks = await Promise.all(dialogues.reverse().map(async dialogue => {
+            const blocks = await Promise.all(dialogues.map(async dialogue => {
                 return await Block.findById(dialogue.response)
             }))
             res.send({blocks})

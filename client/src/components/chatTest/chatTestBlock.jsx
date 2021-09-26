@@ -49,7 +49,11 @@ const ChatBlock = ({block}) => {
                 {block.title 
                 && <h3>{block.title}</h3>}
                 <p>
-                    {block.content}
+                  <pre style={{direction: block.isArabic ? 'rtl': 'ltr', 
+                  fontFamily:'sans-serif',
+                  fontSize:'1.3rem'}}>
+                  {block.content}
+                </pre>  
                 </p>
                 {block.buttons 
                 && block.buttons.map(button => (

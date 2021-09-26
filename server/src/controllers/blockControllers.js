@@ -1,4 +1,6 @@
 import Block from '../models/blockModel.js'
+import Dialogue from '../models/dialogueModel.js'
+import TimedBlock from '../models/TimesBlocks.js'
 
 
 export const createBlock = async (req, res, next) => {
@@ -77,6 +79,8 @@ export const deleteBlock = async(req, res, next) => {
             res.status(404)
             throw new Error('No Block Found')
         }
+        await Dialogue.deleteMany({response:id})
+        await TimedBlock.deleteMany({block:id})
         await block.remove()
         res.status(204).send()
     } catch (error) {

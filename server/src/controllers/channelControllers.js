@@ -1,5 +1,8 @@
 import Channel from '../models/channelModel.js'
 import Writer from '../models/writerModel.js'
+import Block from '../models/blockModel.js'
+import Dialogue from '../models/dialogueModel.js'
+import TimedBlock from '../models/TimesBlocks.js'
 
 export const createChannel = async (req, res, next) => {
     const {name, description} = req.body
@@ -90,6 +93,9 @@ export const deleteChannel = async (req, res, next) => {
                await writer.save()
            }
        })
+        await Block.deleteMany({channel:id})
+        await Dialogue.deleteMany({channel:id})
+        await TimedBlock.deleteMany({channel:id})
         await channel.remove()
         res.send({message:'The Channel has removed'})
     } catch (error) {

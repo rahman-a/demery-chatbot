@@ -58,6 +58,10 @@ const blockSchema = new mongoose.Schema({
     image:{
         type:String
     },
+    isArabic:{
+        type:Boolean,
+        default:true
+    },
     buttons:[buttonSchema]
 
 }, {

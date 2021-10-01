@@ -53,13 +53,16 @@ export const getTimedBlocks = async (req, res, next) => {
             const block =  await Block.findById(timed.block) 
             const newDialogue = new Dialogue({
                 channel,
-                user:req.writer._id,
+                user:req.writer?._id ||  req.user._id,
                 response:block._id
             })
             await newDialogue.save()
             return block
         }))
-        res.send({blocks})
+        res.send({
+            success:true,
+            blocks
+        })
     } catch (error) {
         next(error)
     }

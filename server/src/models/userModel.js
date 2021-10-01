@@ -62,7 +62,7 @@ userSchema.methods.toJSON = function(){
 userSchema.statics.findByCredential = async (info, password, res) => {
     let user = await User.findOne({userName:info})
     if(!user) {
-        user = await user.findOne({email:info})
+        user = await User.findOne({email:info})
         if(!user) {
             res.status(401)
             throw new Error('No Account Found with that information, Please try again')
@@ -110,7 +110,7 @@ userSchema.methods.subscribe = async function(channelId){
 }
 
 userSchema.methods.unsubscribe = async function(channelId){
-    this.channels = this.channels.filter(channel => channel._id !== channelId )
+    this.channels = this.channels.filter(id => id.toString() !== channelId)
     await this.save()
 }
 

@@ -11,6 +11,8 @@ import channelRouter from './src/routers/channelRouter.js'
 import dialogueRouter from './src/routers/dialogueRouter.js'
 import blockRouter from './src/routers/blockRouter.js'
 import timedRouter from './src/routers/timedRouter.js'
+import userRouter from './src/routers/userRouter.js'
+import {checkUserApiKey, checkDashApiKey} from './src/middleware/auth.js'
 import {fileURLToPath} from 'url'
 import path from 'path' 
 
@@ -24,11 +26,12 @@ app.use(express.json())
 app.use(morgan('dev'))
 app.use(helmet())
 app.use(cookieParser())
-app.use('/api/writers', writerRouter)
-app.use('/api/channels', channelRouter)
-app.use('/api/blocks', blockRouter)
-app.use('/api/dialogues', dialogueRouter)
-app.use('/api/timed', timedRouter)
+app.use('/api/writers', checkDashApiKey,writerRouter)
+app.use('/api/channels', checkDashApiKey,channelRouter)
+app.use('/api/blocks', checkDashApiKey,blockRouter)
+app.use('/api/dialogues', checkDashApiKey,dialogueRouter)
+app.use('/api/timed', checkDashApiKey,timedRouter)
+app.use('/api/users',checkUserApiKey, userRouter)
 app.use('/api/uploads', express.static(path.resolve(__dirname, './uploads')))
 if(process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, '../client/build')))

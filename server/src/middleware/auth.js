@@ -1,4 +1,5 @@
 import Writer from '../models/writerModel.js'
+import User from '../models/userModel.js'
 import jwt from 'jsonwebtoken'
 
 export const isAuth = async(req, res, next) => {
@@ -36,8 +37,7 @@ export const isUserAuth = async(req, res, next) => {
                 if(err) throw new Error('please login first')
                 return decode
             })
-
-            const user = await Writer.findOne({_id:decode._id, 'tokens.token':token}) 
+            const user = await User.findOne({_id:decode._id, 'tokens.token':token})
             if(!user) {
                 res.status(401)
                 throw new Error('please login first')
@@ -67,4 +67,38 @@ export const isAdmin = (req, res, next) => {
         next(error)
     }
     
+}
+
+export const checkDashApiKey = (req, res, next) => {
+    if(req.headers.apikey){
+        try {
+            if(req.headers.apikey === process.env.DASHAPIKEY) next()
+            else {
+                res.status(401)
+                throw new Error('Please Provide A valid Api Key')
+            }
+        } catch (error) {
+            next(error)
+        }
+    }else  {
+        res.status(401)
+        next(new Error('NOT Authorized to Access the API'))
+    }
+}
+
+export const checkUserApiKey = (req, res, next) => {
+    if(req.headers.apikey){
+        try {
+            if(req.headers.apikey === process.env.USERAPIKEY) next()
+            else {
+                res.status(401)
+                throw new Error('Please Provide A valid Api Key')
+            }
+        } catch (error) {
+            next(error)
+        }
+    }else  {
+        res.status(401)
+        next(new Error('NOT Authorized to Access the API'))
+    }
 }

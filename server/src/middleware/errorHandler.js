@@ -10,8 +10,20 @@ export const errorHandler = async(err, req, res, next) => {
         error = `${err.errors[key].value} is invalid please write a valid ${err.errors[key].path}`
     }
     const statusCode = res.statusCode === 200 ? 500 : res.statusCode
-    res.status(statusCode).send({
-        message:error ? error :err.message ,
-        stack:process.env.NODE_ENV === 'development' ? err.stack: null
-    })
+    let errorObject = {}
+    if(process.env.NODE_ENV === 'development') {
+        errorObject = {
+            success:false,
+            message:error ? error :err.message ,
+            error:statusCode,
+            stack:err.stack
+        }
+    }else {
+        errorObject = {
+            success:false,
+            message:error ? error :err.message ,
+            error:statusCode,
+        }
+    }
+    res.status(statusCode).send(errorObject)
 }

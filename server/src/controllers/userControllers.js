@@ -32,7 +32,11 @@ export const createNewUser = async(req, res, next) => {
             }
         }
        await newUser.save()
-        res.status(201).send({message:'The Account has been created'})
+        res.status(201).send({
+            id:newUser._id,
+            success:true,
+            message:'The Account has been created'
+        })
     } catch (error) {
         next(error)
     }
@@ -43,9 +47,14 @@ export const userLogin = async(req, res, next) => {
     try {
         const user = await User.findByCredential(info, password, res)
         const token = await user.generateToken()
-        res.cookie('token', token, {httpOnly:true, maxAge:1000 * 60 * 60 * 24})
+        res.cookie('token', token, {httpOnly:true, maxAge:1000 * 60 * 60 * 24 * 7})
         const userData = user.toAuthJSON()
-        res.send({userData, expireAt: expireAt(1)})
+        res.send({
+            id:userData._id, 
+            expireAt: expireAt(7),
+            message:'The User has Logged in successfully',
+            success:true
+        })
     } catch (error) {
         next(error)
     }
@@ -53,7 +62,10 @@ export const userLogin = async(req, res, next) => {
 
 export const getUserData = async (req, res, next) => {
     try {
-        res.status(200).send({user:req.user})
+        res.status(200).send({
+            success:true,
+            user:req.user
+        })
     } catch (error) {
         next(error)        
     }
@@ -67,13 +79,16 @@ export const getUserDataById = async (req, res, next) => {
             res.status(404) 
             throw new Error('No Data Found')
         }
-        res.status(200).send({user})
+        res.status(200).send({
+            success:true,
+            user
+        })
     } catch (error) {
         next(error)
     }
 }
 
-export const getAllUser = async(req, res, next) => {
+export const getAllUsers = async(req, res, next) => {
     const {name} = req.query
     let searchFilter = {} 
     try {
@@ -97,7 +112,10 @@ export const getAllUser = async(req, res, next) => {
                 throw new Error('No Users Found')
             }
         }
-        res.send({users})
+        res.send({
+            success:true,
+            users
+        })
     } catch (error) {
         next(error)
     }
@@ -108,7 +126,10 @@ export const userLogout = async(req, res, next) => {
         req.user.tokens = req.user.tokens.filter(token => token.token !== req.token)
         await req.user.save()
         res.clearCookie('token')
-        res.status(204).send()
+        res.send({
+            success:true,
+            message:'The User has Logged out successfully'
+        })
     } catch (error) {
         next(error)
     }
@@ -130,8 +151,11 @@ export const userEdit = async (req, res, next) => {
             }
         }
         await user.save()
-        const userData = user.toAuthJSON()
-        res.send({message:'The Account has updated', userData})
+        res.send({
+        id:user._id,
+        success:true,
+        message:'The Account has been updated'
+    })
     } catch (error) {
         next(error)
     }
@@ -148,8 +172,11 @@ export const changeUserAvatar = async(req, res, next) => {
         }
         user.image = req.fileName
         await user.save()
-        const userData = user.toAuthJSON()
-        res.status(200).send({message:'the image has been uploaded', userData})
+        res.status(200).send({
+            id:user._id,
+            message:'the image has been uploaded', 
+            success:true
+        })
     } catch (error) {
         next(error) 
     }
@@ -166,9 +193,15 @@ export const toggleUserAccess = async (req, res, next) => {
         user.isActive = !user.isActive 
         await user.save()
         if(user.isActive) {
-            res.status(200).send({message:'The Block has been removed'})
+            res.status(200).send({
+                success:true,
+                message:'The Block has been removed'
+            })
         }else {
-            res.status(200).send({message:'The user has been blocked'})
+            res.status(200).send({
+                success:true,
+                message:'The user has been blocked'
+            })
         }
     } catch (error) {
         next(error)
@@ -178,13 +211,21 @@ export const toggleUserAccess = async (req, res, next) => {
 export const userDelete = async (req, res, next) => {
     const {id} = req.params 
     try {
-        const user = await User.findById(id)
+        let user = null 
+        if(id) {
+            user = await User.findById(id)
+        }else {
+            user = req.user
+        }
         if(!user) {
             res.status(400)
             throw new Error('The Account not found')
         }
+        const userId = user._id
         await user.remove()
         res.status(200).send({
+            id:userId,
+            success:true,
             message:'The account has been Deleted'
         }) 
 
@@ -195,21 +236,31 @@ export const userDelete = async (req, res, next) => {
 
 export const listAllChannels = async (req, res, next) => {
     const {id} = req.params
-
+    const {skip, page} = req.query
     try {
         let channels = null
-        const user = await User.findById(id)
-        if(user.isAdmin){
-            channels = await Channel.find({})
-        }else {
-            const user = await user.findById(id).populate('channels')
+        if(id){
+            const user = await User.findById(id).populate({
+                path:'channels',
+                options:{
+                    limit:parseInt(page) || 5,
+                    skip:parseInt(skip)
+                }
+            })
+            
             channels = user.channels
+        }else {
+            channels = await Channel.find({})
+            .skip(parseInt(skip)).limit(parseInt(page) || 5)  
         }
         if(!channels || channels.length === 0){
             res.status(404)
             throw new Error('No Channels Found')
         }
-        res.send({channels})       
+        res.send({
+            success:true,
+            channels
+        })       
     } catch (error) {
         next(error)
     }
@@ -219,8 +270,10 @@ export const subscribeToChannel = async (req, res, next) => {
     const {channelId} = req.body 
     try {
         await req.user.subscribe(channelId)
-        await req.user.save()
-        res.send({message:'Subscription has been Confirmed'})
+        res.send({
+            success:true,
+            message:'Subscription has been Confirmed'
+        })
     } catch (error) {
         next(error)
     }
@@ -230,8 +283,10 @@ export const unsubscribeToChannel = async (req, res, next) => {
     const {channelId} = req.body 
     try {
         await req.user.unsubscribe(channelId)
-        await req.user.save()
-        res.send({message:'UnSubscription has been Confirmed'})
+        res.send({
+            success:true,
+            message:'UnSubscription has been Confirmed'
+        })
     } catch (error) {
         next(error)
     }
@@ -239,9 +294,11 @@ export const unsubscribeToChannel = async (req, res, next) => {
 
 // user dialogues controllers
 export const getUserDialogue = async (req, res, next) => {
-    const {channelId} = req.params 
+    const {channelId} = req.params
+    const {skip, count} = req.query
     try {
         const dialogues = await Dialogue.find({channel:channelId, user:req.user._id})
+        .sort({createdAt:-1}).skip(parseInt(skip)).limit(parseInt(count) || 10)
         if(!dialogues || dialogues.length === 0){
             const block = await Block.findOne({role:'init', channel:channelId})
             if(!block) throw new Error('No Dialogues Found, start creating your blocks')
@@ -256,7 +313,10 @@ export const getUserDialogue = async (req, res, next) => {
             const blocks = await Promise.all(dialogues.map(async dialogue => {
                 return await Block.findById(dialogue.response)
             }))
-            res.send({blocks})
+            res.send({
+                success:true,
+                blocks
+            })
         }
     } catch (error) {
         next(error)
@@ -277,7 +337,10 @@ export const getOneBlock = async (req, res, next) =>{
             response:blockId
         })
         await newDialogue.save()
-        res.send({block})
+        res.send({
+            success:true,
+            block
+        })
     } catch (error) {
         next(error)
     }
@@ -287,7 +350,10 @@ export const deleteRecords = async(req, res, next) => {
     const {channelId} = req.params 
     try {
         await Dialogue.deleteMany({channel:channelId, user:req.user._id})
-        res.status(204).send()
+        res.send({
+            success:true,
+            message:'Records has been deleted'
+        })
     } catch (error) {
         next(error)
     }

@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import style from './style.module.scss'
 import InstantBlock from '../instantChat'
 import InstantProvider from '../../context/broadcast'
-import Schedule from '../schedule'
+// import Schedule from '../schedule'
 
 const TimedBlocks = () => {
     const [timedType, setTimedType] = useState('instant')

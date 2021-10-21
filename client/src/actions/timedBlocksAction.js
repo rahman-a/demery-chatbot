@@ -14,27 +14,27 @@ export const addTimedBlock = (info) => async(dispatch) => {
     }
 }
 
-export const listTimedBlock = (channel) => async(dispatch) => {
-    dispatch({type: type.LIST_TIMED_BLOCK_REQUEST})
+export const listTimedDialogueBlock = (channel) => async(dispatch) => {
+    dispatch({type: type.LIST_TIMED_DIALOGUE_BLOCK_REQUEST})
     try {
-        const {data} = await api.listTimedBlocks(channel)
-        dispatch({type: type.LIST_TIMED_BLOCK_SUCCESS, payload:data.blocks})
+        const {data} = await api.listTimedDialogueBlocks(channel)
+        dispatch({type: type.LIST_TIMED_DIALOGUE_BLOCK_SUCCESS, payload:data.blocks})
     } catch (error) {
         dispatch({
-            type: type.LIST_TIMED_BLOCK_FAIL,
+            type: type.LIST_TIMED_DIALOGUE_BLOCK_FAIL,
             payload:error.response && error.response.data.message 
         })
     }
 }
 
-export const listBroadcastBlock = (channel, blockType) => async(dispatch) => {
-    dispatch({type: type.LIST_BROADCAST_BLOCK_REQUEST})
+export const listTimedBlock = (channel, blockType) => async(dispatch) => {
+    dispatch({type: type.LIST_TIMED_BLOCK_REQUEST})
     try {
-        const {data} = await api.listBroadcast(channel, blockType)
-        dispatch({type: type.LIST_BROADCAST_BLOCK_SUCCESS, payload:data.blocks})
+        const {data} = await api.listTimedBlocks(channel, blockType)
+        dispatch({type: type.LIST_TIMED_BLOCK_SUCCESS, payload:data.blocks})
     } catch (error) {
         dispatch({
-            type: type.LIST_BROADCAST_BLOCK_FAIL,
+            type: type.LIST_TIMED_BLOCK_FAIL,
             payload:error.response && error.response.data.message 
         })
     }

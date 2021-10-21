@@ -1,0 +1,13 @@
+@use '../../sass/variables' as gv;
+
+.keyword {
+    position: absolute;
+    top: 50%;
+    left: 45%;
+    text-align: center;
+    color: gv.$yellow-50;
+    h1 {
+        font-size: 5rem;
+        font-weight: 200;
+    }
+}

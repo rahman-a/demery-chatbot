@@ -8,13 +8,17 @@ export const createTimed = async (req, res, next) => {
     try {
         const timedBlock = await newTimedBlock.save()
         const block = await Block.findById(timedBlock.block)
-        res.status(201).send({block})
+        res.status(201).send({block:
+            {...block._doc, 
+            date:timedBlock.date, 
+            sent:!(timedBlock.isActive)}
+        })
     } catch (error) {
         next(error)
     }
 }
 
-export const listBroadcastBlocks = async(req, res,next) => {
+export const listTimedBlocks = async(req, res,next) => {
     const {channel} = req.params 
     const {type} = req.query
     try {
@@ -25,7 +29,7 @@ export const listBroadcastBlocks = async(req, res,next) => {
         }
         const blocks = await Promise.all(timedBlocks.map(async block => {
             const getBlock = await Block.findById(block.block)
-            return getBlock
+            return {...getBlock._doc, date:block.date, sent:!(block.isActive)}
         }))
         res.send({blocks})
     } catch (error) {

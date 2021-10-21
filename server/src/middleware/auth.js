@@ -31,8 +31,8 @@ export const isAuth = async(req, res, next) => {
 
 export const isUserAuth = async(req, res, next) => {
     try {
-        if(req.cookies['token']){
-            const token =  req.cookies['token'] 
+        if(req.headers.authorization){
+            const token = req.headers.authorization.replace('Bearer ', '')
             const decode = jwt.verify(token, process.env.JWT_TOKEN, (err, decode) => {
                 if(err) throw new Error('please login first')
                 return decode

@@ -51,7 +51,8 @@ const ChatBlock = ({block}) => {
                 <p>
                   <pre style={{direction: block.isArabic ? 'rtl': 'ltr', 
                   fontFamily:'sans-serif',
-                  fontSize:'1.3rem'}}>
+                  fontSize:'1.3rem',
+                  whiteSpace:'break-spaces'}}>
                   {block.content}
                 </pre>  
                 </p>

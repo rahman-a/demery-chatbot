@@ -1,0 +1,86 @@
+@use '../../sass/variables' as gv;
+
+.schedule {
+    &__wrapper {
+        margin: 5rem 0 0 5rem;
+    }
+    &__create {
+        &_box {
+            display: grid;
+            place-items: center;
+            width: 5rem;
+            height: 5rem;
+            border:2px dashed gv.$yellow-50;
+            cursor: pointer;
+            transition: all 0.5s ease;
+            svg {
+                fill:gv.$yellow-50;
+            }
+            &:hover {
+                border-style: solid;
+            }
+        }
+        &_search {
+            position: relative;
+            width: 26rem;
+            input {
+                all: unset;
+                border: 1px solid #1b8dfc;
+                border-radius: 1.2rem;
+                width: 25rem;
+                padding: 0.2rem 0.5rem;
+                background-color: gv.$white;
+                &::placeholder {
+                    font-size: 1.3rem;
+                    color:lighten(gv.$light-black, 50%);
+                }
+            }
+            span {
+                position: absolute;
+                left: -3rem;
+                top: -0.7rem;
+                font-size: 2.5rem;
+                color:gv.$yellow-50;
+                cursor: pointer;
+            }
+        }
+        &_suggestions {
+            position: absolute;
+            background-color: gv.$white;
+            color: gv.$yellow;
+            width: 95%;
+            transform: translateX(8px);
+            border-bottom-left-radius: 1.5rem;
+            border-bottom-right-radius: 1.5rem;
+            overflow: hidden;
+            height: 0;
+            transition: height 0.2s ease-in-out;
+            z-index:9999;
+        }
+        &_list {
+            padding:0;
+            margin:0;
+        }
+        &_item {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            &:hover {
+                background-color:darken(gv.$yellow, 15%);
+                color:gv.$white;
+            }
+        }
+    }
+    &__blocks {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    &__error {
+        position: absolute;
+        top: 50%;
+        left: 45%;
+        text-align: center;
+        color: gv.$yellow-50;
+        font-size: 5rem;
+        font-weight: 200;
+    }
+}

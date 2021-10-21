@@ -15,21 +15,6 @@ export const addTimedBlockReducer = (state, action) => {
     }
 }
 
-export const listBroadcastBlocksReducer = (state, action) => {
-    switch(action.type){
-        case type.LIST_BROADCAST_BLOCK_REQUEST: 
-            return {loading:true, error:null} 
-        case type.LIST_BROADCAST_BLOCK_SUCCESS: 
-            return {loading:false, error:null, blocks:action.payload}
-        case type.LIST_BROADCAST_BLOCK_RESET: 
-            return {loading:false, error:null, blocks:null}
-        case type.LIST_BROADCAST_BLOCK_FAIL: 
-            return {loading:false, error:action.payload} 
-        default:
-            return {...state}
-    }
-}
-
 export const listTimedBlocksReducer = (state, action) => {
     switch(action.type){
         case type.LIST_TIMED_BLOCK_REQUEST: 
@@ -39,6 +24,21 @@ export const listTimedBlocksReducer = (state, action) => {
         case type.LIST_TIMED_BLOCK_RESET: 
             return {loading:false, error:null, blocks:null}
         case type.LIST_TIMED_BLOCK_FAIL: 
+            return {loading:false, error:action.payload} 
+        default:
+            return {...state}
+    }
+}
+
+export const listTimedDialogueReducer = (state, action) => {
+    switch(action.type){
+        case type.LIST_TIMED_DIALOGUE_BLOCK_REQUEST: 
+            return {loading:true, error:null} 
+        case type.LIST_TIMED_DIALOGUE_BLOCK_SUCCESS: 
+            return {loading:false, error:null, blocks:action.payload}
+        case type.LIST_TIMED_DIALOGUE_BLOCK_RESET: 
+            return {loading:false, error:null, blocks:null}
+        case type.LIST_TIMED_DIALOGUE_BLOCK_FAIL: 
             return {loading:false, error:action.payload} 
         default:
             return {...state}

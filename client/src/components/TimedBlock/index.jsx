@@ -7,7 +7,7 @@ import {removeTimedBlock} from '../../actions/timedBlocksAction'
 import {useDispatch, useSelector} from 'react-redux'
 import {type} from '../../constants/timedBlockConstants'
 
-const BroadcastingBlock = ({block}) => {
+const BroadcastingBlock = ({block, timed}) => {
     const [toggleDelete, setToggleDelete] = useState(false)
     const {loading, error} = useSelector(state => state.timedBlockRemoved)
     const dispatch = useDispatch()
@@ -27,18 +27,32 @@ const BroadcastingBlock = ({block}) => {
     }, [error])
     return (
         <>
-        <div className={style.instant__block} onClick={showDeleteHandler}>
-            <div className={style.instant__delete} style={{display:toggleDelete ?'grid' :'none'}}>
+        <div className={style.timedBlock__block} onClick={showDeleteHandler}>
+            {
+                timed &&
+                <div className={style.timedBlock__date}>
+                    <p>
+                        {block.sent ? 'sent' : 'start'} at &nbsp;
+                        <span style={{color: block.sent ? 'green':'crimson'}}>
+                            {
+                            new Date(block.date).toLocaleString()
+                            }
+                        </span> 
+                    </p>
+                </div>
+            }
+            <div className={style.timedBlock__delete} style={{display:toggleDelete ?'grid' :'none'}}>
                 {loading 
                 ? <Loader size='15' center/>
                 :error
                 && <Alert variant='danger'>{error}</Alert>}
-                <div className={style.instant__delete_btn}>
+                <div className={style.timedBlock__delete_btn}>
                     <Button variant='danger'onClick={deleteBlockHandler}>Delete</Button>
                     <Button variant='light' onClick={cancelDeleteHandler}>Cancel</Button>
                 </div>
             </div>
-            <div className={style.instant__block_content}>
+            <div className={style.timedBlock__block_content}
+            style={{borderRadius: !timed && '1rem'}}>
                 {block.title 
                 && <h3>{block.title}</h3>}
                 <p>

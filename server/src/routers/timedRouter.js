@@ -2,7 +2,7 @@ import express from 'express'
 const router  = express.Router()
 import {isAuth} from '../middleware/auth.js'
 import {createTimed, 
-    listBroadcastBlocks, 
+    listTimedBlocks, 
     deleteTimedBlock,
     getTimedBlocks
 } from '../controllers/timedControllers.js'
@@ -10,7 +10,7 @@ import {createTimed,
 
 
 router.post('/new', isAuth, createTimed)
-router.get('/:channel', isAuth, listBroadcastBlocks)
+router.get('/:channel', isAuth, listTimedBlocks)
 router.get('/blocks/:channel', isAuth, getTimedBlocks)
 router.delete('/:id', isAuth, deleteTimedBlock)
 

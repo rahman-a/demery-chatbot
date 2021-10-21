@@ -82,7 +82,7 @@ const Login = () => {
                     type="submit" 
                     value="login"  
                     className={style.login__submit}/>
-                    <button onClick={() => resetForgetPassword(true)}>Forget Password?</button>
+                    {/* <button onClick={() => resetForgetPassword(true)}>Forget Password?</button> */}
                 </div>
             </form>
         </div>

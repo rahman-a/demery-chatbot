@@ -47,13 +47,13 @@ export const userLogin = async(req, res, next) => {
     try {
         const user = await User.findByCredential(info, password, res)
         const token = await user.generateToken()
-        res.cookie('token', token, {httpOnly:true, maxAge:1000 * 60 * 60 * 24 * 7})
         const userData = user.toAuthJSON()
         res.send({
             id:userData._id, 
             expireAt: expireAt(7),
             message:'The User has Logged in successfully',
-            success:true
+            success:true,
+            token
         })
     } catch (error) {
         next(error)

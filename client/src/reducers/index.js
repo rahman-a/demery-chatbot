@@ -41,7 +41,7 @@ import {
 import {
     addTimedBlockReducer,
     listTimedBlocksReducer,
-    listBroadcastBlocksReducer,
+    listTimedDialogueReducer,
     removeTimedBlockReducer
 } from './timedBlockReducer'
 
@@ -80,8 +80,8 @@ const globalReducer = {
 
     // Timed Block Reducer
     timedBlockAdded: addTimedBlockReducer,
-    timedBlocks:listTimedBlocksReducer,
-    broadcastBlocks: listBroadcastBlocksReducer,
+    timedDialogueBlocks:listTimedDialogueReducer,
+    timedBlocks: listTimedBlocksReducer,
     timedBlockRemoved:removeTimedBlockReducer,
 }
 

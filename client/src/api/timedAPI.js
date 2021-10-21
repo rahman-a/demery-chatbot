@@ -4,10 +4,10 @@ const services = {
     addBlock(data){
         return api().post('/timed/new', data)
     },
-    listBroadcast(channel, type){
+    listTimedBlocks(channel, type){
         return api().get(`timed/${channel}?type=${type}`)
     },
-    listTimedBlocks(channel){
+    listTimedDialogueBlocks(channel){
         return api().get(`timed/blocks/${channel}`)
     },
     removeBlock(block){

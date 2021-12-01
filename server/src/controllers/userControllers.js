@@ -11,14 +11,6 @@ export const createNewUser = async(req, res, next) => {
     })
 
     try {
-        if(!userName) {
-            res.status(400)
-            throw new Error('user name is required')
-        }
-        if(!email) {
-            res.status(400)
-            throw new Error('E-mail is required')
-        }
         let isExist = await User.findOne({email})
         if(isExist) {
             res.status(400)
@@ -236,9 +228,18 @@ export const userDelete = async (req, res, next) => {
 
 export const listAllChannels = async (req, res, next) => {
     const {id} = req.params
-    const {skip, page} = req.query
+    const {skip, page, name} = req.query
+    let searchFilter = {}
     try {
         let channels = null
+        if(name) {
+            searchFilter = {
+                name: {
+                    $regex:name,
+                    $options:'i'
+                }
+            }
+        }
         if(id){
             const user = await User.findById(id).populate({
                 path:'channels',
@@ -250,7 +251,7 @@ export const listAllChannels = async (req, res, next) => {
             
             channels = user.channels
         }else {
-            channels = await Channel.find({})
+            channels = await Channel.find({...searchFilter})
             .skip(parseInt(skip)).limit(parseInt(page) || 5)  
         }
         if(!channels || channels.length === 0){
@@ -301,7 +302,7 @@ export const getUserDialogue = async (req, res, next) => {
         .sort({createdAt:-1}).skip(parseInt(skip)).limit(parseInt(count) || 10)
         if(!dialogues || dialogues.length === 0){
             const block = await Block.findOne({role:'init', channel:channelId})
-            if(!block) throw new Error('No Dialogues Found, start creating your blocks')
+            if(!block) throw new Error('No Dialogues Found')
             const newDialogue  = new Dialogue({
                 channel:channelId,
                 user:req.user._id,

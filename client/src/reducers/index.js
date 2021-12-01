@@ -37,11 +37,19 @@ import {
     deleteDialogueRecords
 } from './dialogueReducer'
 
+// Sequence Reducer
+import {
+    listSequenceReducer,
+    createSequenceReducer,
+    deleteSequenceReducer
+} from './sequenceReducer'
+
 // Timed Blocks Reducer 
 import {
     addTimedBlockReducer,
     listTimedBlocksReducer,
     listTimedDialogueReducer,
+    toggleTimedBlockReducer,
     removeTimedBlockReducer
 } from './timedBlockReducer'
 
@@ -78,10 +86,16 @@ const globalReducer = {
     dialogueBlock:getDialogueBlock,
     deleteRecords:deleteDialogueRecords,
 
+    // Sequence Reducer
+    sequenceGroups: listSequenceReducer,
+    sequenceGroup: createSequenceReducer,
+    sequenceGroupRemoved:deleteSequenceReducer,
+
     // Timed Block Reducer
     timedBlockAdded: addTimedBlockReducer,
     timedDialogueBlocks:listTimedDialogueReducer,
     timedBlocks: listTimedBlocksReducer,
+    toggleBlock:toggleTimedBlockReducer,
     timedBlockRemoved:removeTimedBlockReducer,
 }
 

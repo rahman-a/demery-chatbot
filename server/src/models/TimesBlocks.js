@@ -6,6 +6,11 @@ const timedBlockSchema = new mongoose.Schema({
         required:true,
         ref:'Channel'
     },
+    group : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'Sequence',
+        default:null
+    },
     block: {
         type:mongoose.Schema.Types.ObjectId,
         required:true,
@@ -20,10 +25,22 @@ const timedBlockSchema = new mongoose.Schema({
         type:Boolean,
         default:true
     },
+    day: {
+        type:String,
+        default:null
+    },
     date:{
         type:Date,
-        required:true
-    }
+        default:null
+    },
+    ids:[
+        {
+            type:mongoose.Schema.Types.ObjectId,
+            ref:'User'
+        }
+    ]
+}, {
+    timestamps:true
 })
 
 const TimedBlock = mongoose.model('TimedBlock', timedBlockSchema)

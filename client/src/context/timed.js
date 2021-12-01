@@ -1,6 +1,7 @@
 import {
     TIMED_BLOCKS_ADD,
     TIMED_BLOCKS_RESET,
+    TIMED_BLOCK_TOGGLE,
     TIMED_BLOCK_REMOVE
 } from './actionTypes.js'
 import {createContext, useContext, useReducer} from 'react'
@@ -23,6 +24,14 @@ const timedBlockReducer = (state, action) => {
         case TIMED_BLOCK_REMOVE:
             const  allBlocks = state.timedBlocks.filter(block => block._id !== action.payload)
             return {timedBlocks:allBlocks}
+        case TIMED_BLOCK_TOGGLE: 
+            const allSequenceBlocks = [...state.timedBlocks]
+            allSequenceBlocks.forEach(block => {
+                if(block._id === action.payload){
+                    block.isActive = !block.isActive
+                }
+            })
+            return {timedBlocks:allSequenceBlocks}
         case TIMED_BLOCKS_RESET: 
             return {timedBlocks:[]}
         default:

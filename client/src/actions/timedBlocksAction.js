@@ -27,10 +27,10 @@ export const listTimedDialogueBlock = (channel) => async(dispatch) => {
     }
 }
 
-export const listTimedBlock = (channel, blockType) => async(dispatch) => {
+export const listTimedBlock = (channel, blockType, group) => async(dispatch) => {
     dispatch({type: type.LIST_TIMED_BLOCK_REQUEST})
     try {
-        const {data} = await api.listTimedBlocks(channel, blockType)
+        const {data} = await api.listTimedBlocks(channel, blockType, group)
         dispatch({type: type.LIST_TIMED_BLOCK_SUCCESS, payload:data.blocks})
     } catch (error) {
         dispatch({
@@ -40,10 +40,24 @@ export const listTimedBlock = (channel, blockType) => async(dispatch) => {
     }
 }
 
-export const removeTimedBlock = (id) => async(dispatch) => {
+export const toggleTimedBlock = (id, group) => async(dispatch) => {
+    dispatch({type: type.TOGGLE_TIMED_BLOCK_REQUEST})
+    try {
+        const {data} = await api.toggleActivation(id, group)
+        dispatch({type: type.TOGGLE_TIMED_BLOCK_SUCCESS, payload:data.blockId})
+    } catch (error) {
+        dispatch({
+            type: type.TOGGLE_TIMED_BLOCK_FAIL,
+            payload:error.response && error.response.data.message 
+        })
+    }
+}
+
+
+export const removeTimedBlock = (id, blockType, group) => async(dispatch) => {
     dispatch({type: type.REMOVE_TIMED_BLOCK_REQUEST})
     try {
-        const {data} = await api.removeBlock(id)
+        const {data} = await api.removeBlock(id, blockType, group)
         dispatch({type: type.REMOVE_TIMED_BLOCK_SUCCESS, payload:data.blockId})
     } catch (error) {
         dispatch({

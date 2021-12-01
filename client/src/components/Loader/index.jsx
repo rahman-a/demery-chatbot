@@ -16,6 +16,7 @@ const loader = ({children, size, center, top}) => {
         return {
             textAlign:'center',
             padding:'1rem',
+            zIndex:'99',
             width:size ? `${size}rem` :'3rem',
             height:size ?`${size}rem` : '3rem',
             ...centerStyle

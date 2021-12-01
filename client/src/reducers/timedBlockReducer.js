@@ -45,6 +45,21 @@ export const listTimedDialogueReducer = (state, action) => {
     }
 }
 
+export const toggleTimedBlockReducer = (state, action) => {
+    switch(action.type){
+        case type.TOGGLE_TIMED_BLOCK_REQUEST: 
+            return {loading:true, error:null} 
+        case type.TOGGLE_TIMED_BLOCK_SUCCESS: 
+            return {loading:false, error:null, toggle:action.payload} 
+        case type.TOGGLE_TIMED_BLOCK_FAIL: 
+            return {loading:false, error:action.payload} 
+        case type.TOGGLE_TIMED_BLOCK_RESET: 
+            return {loading:false, error:null, toggle:null}
+        default:
+            return {...state}
+    }
+}
+
 export const removeTimedBlockReducer = (state, action) => {
     switch(action.type){
         case type.REMOVE_TIMED_BLOCK_REQUEST: 

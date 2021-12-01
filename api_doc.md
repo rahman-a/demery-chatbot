@@ -63,18 +63,18 @@ Errors are returned as JSON object in the following format:
     "id":"61504a5f4be4d420e0d5b45a",
     "expiryAt":1633477516413,
     "success":true,
-    "message":"The User has Logged in successfully"
+    "message":"Logged in successfully",
+    "token":"<TOKEN>"
 }
 ```
 
 3. ### **POST** *`/logout`*
-the endpoint will clear the token in the cookie
 
 - Response Object 
 ```json
 {
     "success":true,
-    "message":"The User has Logged out successfully"
+    "message":"Logged out successfully"
 }
 ```
 
@@ -84,7 +84,7 @@ the endpoint will clear the token in the cookie
 ```json
 {
     "success":true,
-    "user": {
+    "user<OBJECT>": {
         "userName":"demery",
         "fullName":"mohamed el demery",
         "email":"demery@test.com",
@@ -150,13 +150,15 @@ the endpoint will clear the token in the cookie
 ```
 ### Channel Endpoints
 ----------------------
-1. ### **GET** *`/channels?page=<num>&skip=<num>`*
+1. ### **GET** *`/channels?name=<string>&page=<num>&skip=<num>`*
+    - to search for channel, Don't have to send full name of the channel,
+    just send a part of the name and it will request all channels that their name contain this part
 
 - Response Object 
 ```json
 {
     "success":true,
-    "channels": [
+    "channels<ARRAY>": [
         {
             "id":"61504a5f4be4d420e0d5b45a",
             "name":"Barcelona Club",
@@ -178,7 +180,7 @@ the endpoint will clear the token in the cookie
 ```json
 {
     "success":true,
-    "channels": [
+    "channels<ARRAY>": [
         {
             "id":"61504a5f4be4d420e0d5b45a",
             "name":"Barcelona Club",
@@ -226,5 +228,121 @@ the endpoint will clear the token in the cookie
 }
 ``` 
 
+### Dialogue Endpoints
 
+1. ### **GET** *`/dialogues/<channel_id>?skip=<num>&count=<num>`*
+    - list all dialogue blocks related to this channel and user
+    - count variables in query define how many blocks per request
+- Response Object
+```json
+{
+    "success":true,
+    "blocks<ARRAY>":[
+        {
+            "isArabic": true,
+            "_id": "6140c4f1d32bfdb840819022",
+            "name": "رسالة ترحيب واشتراك",
+            "title": "مرحبا بك فى قناة Basmala kitchen",
+            "content": "هذة قناة مخصصة لعرض احسن وافضل اكلات حول العالم لهذا اذا كنت مهتم فاضغط على زر الاشتراك",
+            "buttons": [
+                {
+                    "title": "إضغط هنا للإشتراك",
+                    "type": "Subscribe",
+                    "action": "614104b56ba538c46deb70ef",
+                    "_id": "6140c4f1d32bfdb840819023"
+                }
+            ],
+            "type": "Card",
+            "creator": "61342bdac34d202a73a28c51",
+            "channel": "61408a489c0ae41898ec33e9",
+            "role": "init",
+            "abbr": "CD",
+            "createdAt": "2021-09-14T15:54:14.733Z",
+            "updatedAt": "2021-09-19T16:44:22.909Z",
+            "__v": 29,
+            "image": "image-1632069705705-.png"
+        }
+    ]
+}
+```
 
+2.  ### **GET** *`/block/<block_id>/<channel_id>`*
+    - get only one block
+
+- Response Object
+```json
+{
+    "success":true,
+    "block<OBJECT>":{
+            "isArabic": true,
+            "_id": "6140c4f1d32bfdb840819022",
+            "name": "رسالة ترحيب واشتراك",
+            "title": "مرحبا بك فى قناة Basmala kitchen",
+            "content": "هذة قناة مخصصة لعرض احسن وافضل اكلات حول العالم لهذا اذا كنت مهتم فاضغط على زر الاشتراك",
+            "buttons": [
+                {
+                    "title": "إضغط هنا للإشتراك",
+                    "type": "Subscribe",
+                    "action": "614104b56ba538c46deb70ef",
+                    "_id": "6140c4f1d32bfdb840819023"
+                }
+            ],
+            "type": "Card",
+            "creator": "61342bdac34d202a73a28c51",
+            "channel": "61408a489c0ae41898ec33e9",
+            "role": "init",
+            "abbr": "CD",
+            "createdAt": "2021-09-14T15:54:14.733Z",
+            "updatedAt": "2021-09-19T16:44:22.909Z",
+            "__v": 29,
+            "image": "image-1632069705705-.png"
+        }
+}
+```
+
+3. ### **DELETE** *`dialogues/<channel_id>`*
+    - This endpoint will delete all dialogue records and clear the chat
+
+- Response Object
+```json
+{
+    "success":true,
+    "message":"Records has been deleted"
+}
+```
+
+4.  ### **GET** *`/timed/<channel_id>`*
+    - request scheduled blocks that will be send to user in certain time
+
+- Response Object
+```json
+{
+    "success":true,
+    "blocks<ARRAY>":[
+        {
+            "isArabic": true,
+            "_id": "6140c4f1d32bfdb840819022",
+            "name": "رسالة ترحيب واشتراك",
+            "title": "مرحبا بك فى قناة Basmala kitchen",
+            "content": "هذة قناة مخصصة لعرض احسن وافضل اكلات حول العالم لهذا اذا كنت مهتم فاضغط على زر الاشتراك",
+            "buttons": [
+                {
+                    "title": "إضغط هنا للإشتراك",
+                    "type": "Subscribe",
+                    "action": "614104b56ba538c46deb70ef",
+                    "_id": "6140c4f1d32bfdb840819023"
+                }
+            ],
+            "type": "Card",
+            "creator": "61342bdac34d202a73a28c51",
+            "channel": "61408a489c0ae41898ec33e9",
+            "role": "init",
+            "abbr": "CD",
+            "createdAt": "2021-09-14T15:54:14.733Z",
+            "updatedAt": "2021-09-19T16:44:22.909Z",
+            "__v": 29,
+            "image": "image-1632069705705-.png"
+        }
+    ]
+}
+```

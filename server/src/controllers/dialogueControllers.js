@@ -20,7 +20,8 @@ export const getUserDialogue = async (req, res, next) => {
             res.send({blocks:[block]})
         }else {
             const blocks = await Promise.all(dialogues.map(async dialogue => {
-                return await Block.findById(dialogue.response)
+                const block =  await Block.findById(dialogue.response)
+                return {...block, isSent:true}
             }))
             res.send({blocks})
         }
@@ -43,7 +44,7 @@ export const getOneBlock = async (req, res, next) =>{
             response:blockId
         })
         await newDialogue.save()
-        res.send({block})
+        res.send({...block, isSent:true})
     } catch (error) {
         next(error)
     }

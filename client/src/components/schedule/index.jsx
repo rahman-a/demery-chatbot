@@ -63,7 +63,9 @@ const Schedule = () => {
     setFilteredBlocks(filteredBlocks)
   }
   const setDateHandler = e => {
-      setDate(e.target.value)
+    const date = new Date(e.target.value)
+    const increasedDate = date.setHours(date.getHours() + 2)
+    setDate(new Date(increasedDate))
   }
   const adjustBlockTimeHandler = id => {
     setBlockId(id)

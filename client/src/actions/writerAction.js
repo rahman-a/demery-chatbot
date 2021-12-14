@@ -50,7 +50,6 @@ export const createWriterAccount = (info) => async(dispatch) => {
     dispatch({type:type.WRITER_CREATE_REQUEST})
     try {
         const {data} = await api.register(info)
-        console.log('Create copy writer account', info);
         dispatch({type:type.WRITER_CREATE_SUCCESS, payload:data.message})
     } catch (error) {
         console.log(error.response);

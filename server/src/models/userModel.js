@@ -5,29 +5,24 @@ import bcrypt from 'bcrypt'
 const userSchema = new mongoose.Schema({
     userName:{
         type:String,
-        required:true,
         lowerCase:true,
         unique:true,
         trim:true
     },
     firstName:{
         type:String,
-        trim:true
     },
     lastName:{
         type:String,
-        trim:true
     },
     email:{
         type:String,
         unique:true,
         lowerCase:true,
-        required:true,
         match:/^[^\s@]+@[^\s@]+\.[^\s@]+$/
     },
     password:{
         type:String,
-        required:true 
     },
     image :{
         type:String
@@ -43,14 +38,9 @@ const userSchema = new mongoose.Schema({
     notificationToken: {
         type:String
     },
-    tokens:[
-        {
-            token:{
-                type:String
-            }
-        }
-    ]
-
+    token:{
+        type:String
+    }
 }, {
     timestamps:true
 })
@@ -58,7 +48,8 @@ const userSchema = new mongoose.Schema({
 userSchema.methods.toJSON = function(){
     const user = this.toObject()
     delete user.password 
-    delete user.tokens
+    delete user.token
+    delete user.notificationToken
     return user
 }
 
@@ -87,7 +78,7 @@ userSchema.statics.findByCredential = async (info, password, res) => {
 
 userSchema.methods.generateToken = async function(){
     const token = jwt.sign({_id:this._id.toString()},process.env.JWT_TOKEN,{expiresIn:'7 days'})
-    this.tokens = this.tokens.concat({token})
+    this.token = token
     await this.save()
     return token
 }

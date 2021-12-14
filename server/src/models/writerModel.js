@@ -45,14 +45,7 @@ const writerSchema = new mongoose.Schema({
     channels:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Channel'
-    }],
-    tokens:[
-        {
-            token:{
-                type:String
-            }
-        }
-    ]
+    }]
 },{
     timestamps:true
 })
@@ -61,7 +54,7 @@ const writerSchema = new mongoose.Schema({
 writerSchema.methods.toJSON = function(){
     const writer = this.toObject()
     delete writer.password 
-    delete writer.tokens
+    delete writer.token
     if(!writer.isAdmin) delete writer.isAdmin
     return writer
 }
@@ -91,8 +84,6 @@ writerSchema.statics.findByCredential = async (info, password, res) => {
 
 writerSchema.methods.generateToken = async function(){
     const token = jwt.sign({_id:this._id.toString()},process.env.JWT_TOKEN,{expiresIn:'1 days'})
-    this.tokens = this.tokens.concat({token})
-    await this.save()
     return token
 }
 

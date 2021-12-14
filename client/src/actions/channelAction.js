@@ -44,7 +44,6 @@ export const removeChannel = (id) => async (dispatch) => {
     dispatch({type: type.CHANNEL_DELETE_REQUEST})
     try {
         const {data} = await api.remove(id)
-        console.log('delete', data);
         dispatch({type: type.CHANNEL_DELETE_SUCCESS, payload:data.message})
     } catch (error) {
         dispatch({

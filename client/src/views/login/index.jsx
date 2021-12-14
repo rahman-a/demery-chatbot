@@ -27,7 +27,6 @@ const Login = () => {
     }
     
     const resetPasswordHandler = _ => {
-        console.log(email);
         setEmail(' ')
     }
     useEffect(() => {

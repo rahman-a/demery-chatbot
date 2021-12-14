@@ -9,7 +9,7 @@ const connectDB = async _ => {
             useUnifiedTopology:true,
             useCreateIndex:true
         })
-        console.log(chalk.cyan.underline(`Mongodb Connected: ${conn.connection.host}`));
+        console.log(chalk.blueBright.underline.bold(`Mongodb Connected: ${conn.connection.host}`));
     } catch (error) {
         console.log(chalk.red.bold(`ERROR: ${error.message}`));
         process.exit(1)

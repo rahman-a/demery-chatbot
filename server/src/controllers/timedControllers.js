@@ -19,8 +19,6 @@ export const createTimed = async (req, res, next) => {
                     sendNotificationToUserDevice(block, user.notificationToken)
                 }
             })
-            const user = req.writer?._id
-            sendMessageToUserDialogue(timedBlock._id, user, timedBlock.channel)
         } else if(timedBlock.type === 'schedule') {
             cron.scheduleJob(timedBlock.date, async () => {
                 const userData = await extractUsersIds()
@@ -30,8 +28,6 @@ export const createTimed = async (req, res, next) => {
                     sendNotificationToUserDevice(block, user.notificationToken)
                 }
                 })
-                const user = req.writer?._id
-                sendMessageToUserDialogue(timedBlock._id, user, timedBlock.channel)
             })
         }
         if(timedBlock.type === 'sequence'){
@@ -92,15 +88,16 @@ export const getTimedBlocks = async (req, res, next) => {
     try {
         const timedBlocks = await TimedBlock.find({
             channel, 
-            isActive:true, 
+            isActiveForTest:true, 
             date:{$lt: new Date().toISOString()}
         })
+        console.log('timed', timedBlocks);
         if(!timedBlocks || timedBlocks.length === 0){
             res.status(404)
             throw new Error('No Blocks Found')
         }
         timedBlocks.forEach(async block => {
-            block.isActive = false 
+            block.isActiveForTest = false 
             await block.save()
         });
         const blocks = await Promise.all(timedBlocks.map(async timed => {
@@ -108,7 +105,7 @@ export const getTimedBlocks = async (req, res, next) => {
             const newDialogue = new Dialogue({
                 channel,
                 user:req.writer?._id ||  req.user._id,
-                response:timedBlock.block
+                response:timed.block
             })
             await newDialogue.save()
             return block
@@ -159,7 +156,7 @@ export const deleteTimedBlock = async(req, res, next) => {
 }
 
 // Run Daily to send Sequence message
-cron.scheduleJob('0 6 * * *', async () => {
+cron.scheduleJob('* 6 * * *', async () => {
     const today = getToday()
     const timedBlocks = await TimedBlock.find({type:'sequence', day:today})
     const user_data = await extractUsersIds()
@@ -170,7 +167,8 @@ cron.scheduleJob('0 6 * * *', async () => {
         user_data.forEach( async user => {
             if(!(timedBlock.ids.includes(user._id))) {
                 if(isUsersSubscribedToChannel(user.channels, timedBlock.channel) 
-                && isUserReceivedPreviousMessages(previousTimedBlocksIds, user._id)) {
+                && !isUserReceivedPreviousMessages(previousTimedBlocksIds, user._id)
+                && timedBlock.isActive) {
                     timedBlock.ids = timedBlock.ids.concat(user._id)
                     await timedBlock.save()
                     sendMessageToUserDialogue(timedBlock._id, user._id, timedBlock.channel)
@@ -221,7 +219,7 @@ async function sendMessageToUserDialogue (blockId, user, channel) {
     const newDialogue = new Dialogue({
         channel,
         user,
-        response:block
+        response:block.block
     })
     await newDialogue.save()
 }
@@ -247,7 +245,7 @@ function isUsersSubscribedToChannel (channels, id) {
 }
 
 function isUserReceivedPreviousMessages(messageIds, userId) {
-    if(messageIds.include(userId)) {
+    if(messageIds.includes(userId)) {
         return true
     }
     return false

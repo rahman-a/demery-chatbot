@@ -29,7 +29,6 @@ const BroadcastingBlock = ({
         setToggleDelete(true)
     }
     const deleteBlockHandler = _ => {
-        console.log(block);
         blocksModal ? dispatch(deleteSequence(block._id))
         :dispatch(removeTimedBlock(block._id, block.messageType))     
     }

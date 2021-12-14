@@ -2,6 +2,10 @@ import Channel from '../models/channelModel.js'
 import User from '../models/userModel.js'
 import Dialogue from '../models/dialogueModel.js'
 import Block from '../models/blockModel.js'
+import Trial from '../models/trialModel.js'
+import randomString from 'randomstring'
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 export const createNewUser = async(req, res, next) => {
     const {email, userName} = req.body 
@@ -54,6 +58,13 @@ export const userLogin = async(req, res, next) => {
 
 export const getUserData = async (req, res, next) => {
     try {
+        if(req.isTrial) {
+            res.json({
+                success:false,
+                message:'This is Trial Version, please signup first'
+            })
+            return
+        }
         res.status(200).send({
             success:true,
             user:req.user
@@ -131,6 +142,13 @@ export const userEdit = async (req, res, next) => {
     const {id} = req.params 
     const data = req.body
     try {
+        if(req.isTrial) {
+            res.status(200).send({
+                success:false,
+                message:'This is Trial version, please signup first'
+            })
+            return 
+        }
         let user = null
         if(id) {
             user = await User.findById(id) 
@@ -156,6 +174,13 @@ export const userEdit = async (req, res, next) => {
 export const changeUserAvatar = async(req, res, next) => {
     const {id} = req.params 
     try {
+        if(req.isTrial) {
+            res.json({
+                success:false,
+                message:'This is Trial Version, please signup first'
+            })
+            return
+        }
         let user = null 
         if(id) {
             user = await User.findById(id)
@@ -203,6 +228,13 @@ export const toggleUserAccess = async (req, res, next) => {
 export const userDelete = async (req, res, next) => {
     const {id} = req.params 
     try {
+        if(req.isTrial) {
+            res.json({
+                success:false,
+                message:'This is Trial Version, please signup first'
+            })
+            return
+        }
         let user = null 
         if(id) {
             user = await User.findById(id)
@@ -270,6 +302,13 @@ export const listAllChannels = async (req, res, next) => {
 export const subscribeToChannel = async (req, res, next) => {
     const {channelId} = req.body 
     try {
+        if(req.isTrial) {
+            res.json({
+                success:false,
+                message:'This is Trial Version, please signup first'
+            })
+            return
+        }
         await req.user.subscribe(channelId)
         res.send({
             success:true,
@@ -298,18 +337,22 @@ export const getUserDialogue = async (req, res, next) => {
     const {channelId} = req.params
     const {skip, count} = req.query
     try {
-        const dialogues = await Dialogue.find({channel:channelId, user:req.user._id})
+        const dialogues = await Dialogue.find({channel:channelId, user:req.user?._id})
         .sort({createdAt:-1}).skip(parseInt(skip)).limit(parseInt(count) || 10)
         if(!dialogues || dialogues.length === 0){
             const block = await Block.findOne({role:'init', channel:channelId})
             if(!block) throw new Error('No Dialogues Found')
-            const newDialogue  = new Dialogue({
-                channel:channelId,
-                user:req.user._id,
-                response:block._id
-            })
-            await newDialogue.save()
-            res.send({blocks:[block]})
+            if(req.isTrial) {
+                res.send({blocks:[block]})
+            }else {
+                const newDialogue  = new Dialogue({
+                    channel:channelId,
+                    user:req.user._id,
+                    response:block._id
+                })
+                await newDialogue.save()
+                res.send({blocks:[block]})
+            }
         }else {
             const blocks = await Promise.all(dialogues.map(async dialogue => {
                 return await Block.findById(dialogue.response)
@@ -361,8 +404,71 @@ export const deleteRecords = async(req, res, next) => {
 }
 
 
+export const generateAccessToken = async (req, res, next) => {
+    const {phoneId, email} = req.query
+    try {
+        if(email) {
+            const user = await User.findOne({email})
+            if(!user) {
+                res.status(400)
+                throw new Error('This Email isn\'t linked to any account')
+            }
+            const token = await user.generateToken()
+            res.json({
+                success:true,
+                _id:user._id,
+                expiryAt:expireAt(7),
+                token
+            })
+        }else {
+            if(!phoneId) {
+                res.status(400)
+                throw new Error('Please Provide The Phone Id')
+            }
+            const trialToken = await generateTrialToken(phoneId)
+            res.json({
+                success:true,
+                expiryAt:expireAt(7),
+                token:trialToken
+            })
+        }
+    } catch (error) {
+        next(error)
+    }
+} 
+
+async function generateTrialToken (phoneId) {
+    let trialToken = await Trial.findOne({phoneId})
+    const random = randomString.generate()
+    const cryptRandomString = await bcrypt.hash(random, 10)
+    if(!trialToken) {      
+        trialToken = new Trial({auth:cryptRandomString, phoneId})
+        await trialToken.save()
+    }else {
+        trialToken.auth = cryptRandomString
+        await trialToken.save()
+    }
+    const token = jwt.sign({_id:trialToken._id ,auth:random}, process.env.TRIAL_TOKEN, {expiresIn:'7 days'}) 
+    return token
+}
+
 function expireAt(day) { 
     const today = new Date()
     const expiry = new Date(today)
     return expiry.setDate(today.getDate() + day)
 }
+
+/**
+ * if email
+ *      1- check if there is user linked to this email
+ *      2- if user 
+ *          1- generate token with user id and JWT_TOKEN secret
+ *          2- send this token
+ *      3- if not user
+ *          1- generate trial token
+ *          2- send it with message declare this email is wrong and not linked to any account
+ * if not email
+ *      1- generate trial token
+ *      2- send to client
+ * 
+ */

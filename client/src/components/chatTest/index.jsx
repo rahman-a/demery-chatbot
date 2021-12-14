@@ -40,7 +40,6 @@ const ChatTest = ({toggle, setToggle, setChatNotification, dialoguesInit}) => {
     }
 
     const playNotificationSound = _ => {
-        console.log('play sound');
         const audio = new Audio(Notify)
         audio.play()
     }
@@ -72,10 +71,10 @@ const ChatTest = ({toggle, setToggle, setChatNotification, dialoguesInit}) => {
         (blocks || timedDialogueBlocks) ? displayDialogueBlocks() 
         : block && displayOneDialogueBlock()
         loading_bk && scrollToBottomOnLoading()
-        // const interval = setInterval(() => {
-        //     dispatch(listTimedDialogueBlock(id))
-        // }, 1000 * 30)
-        // return () => clearInterval(interval)
+        const interval = setInterval(() => {
+            dispatch(listTimedDialogueBlock(id))
+        }, 1000 * 30)
+        return () => clearInterval(interval)
 // eslint-disable-next-line react-hooks/exhaustive-deps
     },[blocks, block, loading_bk, timedDialogueBlocks])
     return (

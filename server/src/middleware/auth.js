@@ -1,6 +1,8 @@
 import Writer from '../models/writerModel.js'
 import User from '../models/userModel.js'
+import Trial from '../models/trialModel.js'
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 
 export const isAuth = async(req, res, next) => {
     try {
@@ -11,7 +13,7 @@ export const isAuth = async(req, res, next) => {
                 return decode
             })
 
-            const writer = await Writer.findOne({_id:decode._id, 'tokens.token':token}) 
+            const writer = await Writer.findOne({_id:decode._id}) 
             if(!writer) {
                 res.status(401)
                 throw new Error('please login first')
@@ -33,18 +35,40 @@ export const isUserAuth = async(req, res, next) => {
     try {
         if(req.headers.authorization){
             const token = req.headers.authorization.replace('Bearer ', '')
-            const decode = jwt.verify(token, process.env.JWT_TOKEN, (err, decode) => {
-                if(err) throw new Error('please login first')
+            let decode = jwt.verify(token, process.env.JWT_TOKEN, (err, decode) => {
+                if(err){
+                    decode = jwt.verify(token, process.env.TRIAL_TOKEN, (err, decode) => {
+                        if(err) throw new Error('please login first 1')
+                        return decode
+                    })
+                }
                 return decode
             })
-            const user = await User.findOne({_id:decode._id, 'tokens.token':token})
-            if(!user) {
-                res.status(401)
-                throw new Error('please login first')
+            if(!(decode.auth)) {
+                const user = await User.findOne({_id:decode._id, token:token})
+                if(!user) {
+                    res.status(401)
+                    throw new Error('please login first 2')
+                }
+                req.user = user
+                req.token = token 
+                next()
+            }else {
+                const trialToken = await Trial.findById({_id:decode._id})
+                if(!trialToken) {
+                    res.status(401)
+                    throw new Error('Not Authorized')
+                }
+                const isMatch = await bcrypt.compare(decode.auth, trialToken.auth)
+                if(!isMatch) {
+                    res.status(401)
+                    throw new Error('Not Authorized')
+                }
+                req.token = trialToken.token
+                req.isTrial = true
+                next()
             }
-            req.user = user
-            req.token = token 
-            next()
+            
         }else {
             res.status(401)
             throw new Error('please login first')

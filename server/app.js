@@ -4,8 +4,9 @@ import dotenv from 'dotenv'
 import morgan from 'morgan'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
-import cron from 'node-schedule'
 import connectDB from './src/dbConnection.js'
+import mongoose from 'mongoose'
+import chalk from 'chalk'
 import {notFound, errorHandler} from './src/middleware/errorHandler.js'
 import writerRouter from './src/routers/writerRouter.js' 
 import channelRouter from './src/routers/channelRouter.js'
@@ -46,6 +47,10 @@ app.use(notFound)
 app.use(errorHandler)
 
 const port = process.env.PORT || 5000
-app.listen(port, () => {
-    console.log(`server is up and running at port ${port}`);
+
+mongoose.connection.once('open', () => {
+    
+    app.listen(port, () => {
+        console.log(chalk.black.bold.bgGreenBright(`server is up and running at port ${port}`));
+    })
 })

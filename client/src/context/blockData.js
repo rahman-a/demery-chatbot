@@ -15,7 +15,6 @@ const chatBlockReducer = (state, action) => {
                 blocks = {allBlocks: [...state.allBlocks, ...action.payload]}
             }else if(action.payload instanceof Object ) {
                 blocks = {allBlocks:[...state.allBlocks, action.payload]}
-                console.log('Object', blocks);
             }else {
              blocks = state
             }

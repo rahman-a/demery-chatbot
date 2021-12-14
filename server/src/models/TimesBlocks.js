@@ -25,6 +25,10 @@ const timedBlockSchema = new mongoose.Schema({
         type:Boolean,
         default:true
     },
+    isActiveForTest:{
+        type:Boolean,
+        default:true
+    },
     day: {
         type:String,
         default:null

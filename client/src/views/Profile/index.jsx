@@ -20,7 +20,6 @@ const Profile = () => {
     const {loading, error, message} = useSelector(state => state.edit)
 
     const saveAccountHandler = _ => {
-        console.log('Save Account Handler');
         setFormError(null)
         const writerData = Object.keys(info)
         if(writerData.length === 0){

@@ -18,6 +18,7 @@ import {
     getUserDialogue,
     getOneBlock,
     deleteRecords,
+    generateAccessToken
 } from '../controllers/userControllers.js'
 import {getTimedBlocks} from '../controllers/timedControllers.js'
 import {uploadHandler} from '../middleware/upload.js'
@@ -27,6 +28,7 @@ router.post('/register', uploadHandler.single('avatar'),createNewUser)
 router.post('/login', userLogin)
 router.post('/logout', isUserAuth, userLogout)
 router.get('/info', isUserAuth, getUserData)
+router.get('/token', generateAccessToken)
 // router.get('/all', isAuth, isAdmin, getAllUsers)
 router.patch('/edit/:id?', isUserAuth, userEdit)
 router.patch('/avatar/:id?', isUserAuth, uploadHandler.single('avatar'), changeUserAvatar)

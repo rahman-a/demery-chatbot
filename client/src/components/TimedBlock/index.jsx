@@ -49,6 +49,7 @@ const BroadcastingBlock = ({
     }
     useEffect(() => {
         error && dispatch({type: type.REMOVE_TIMED_BLOCK_RESET})
+        // eslint-disable-next-line
     }, [error])
     return (
         <>

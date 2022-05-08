@@ -63,9 +63,10 @@ const Schedule = () => {
     setFilteredBlocks(filteredBlocks)
   }
   const setDateHandler = e => {
-    const date = new Date(e.target.value)
-    const increasedDate = date.setHours(date.getHours() + 2)
-    setDate(new Date(increasedDate))
+    console.log(e.target.value);
+    const date =  new Date(e.target.value).toLocaleString("en-us", {timeZone:"EET"})
+    console.log('Date', date);
+    setDate(new Date(date))
   }
   const adjustBlockTimeHandler = id => {
     setBlockId(id)
@@ -127,7 +128,7 @@ const Schedule = () => {
             <input type="datetime-local" 
             name="date" 
             id="date" 
-            onChange={setDateHandler}/>
+            onChange={(e) => setDateHandler(e)}/>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setDateModal(false)}>

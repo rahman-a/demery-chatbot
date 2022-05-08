@@ -2,10 +2,10 @@ import {type} from '../constants/sequenceConstant'
 import api from '../api/sequenceAPI'
 
 
-export const listSequence = () => async (dispatch) => {
+export const listSequence = (id) => async (dispatch) => {
     dispatch({type:type.SEQUENCE_LIST_REQUEST})
     try {
-        const {data} = await api.listAll()
+        const {data} = await api.listAll(id)
         dispatch({type: type.SEQUENCE_LIST_SUCCESS, payload:data.groups})
     } catch (error) {
         dispatch({

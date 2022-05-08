@@ -7,6 +7,7 @@ import BlocksModal from './blocksModal'
 import GroupBlock from '../TimedBlock'
 import { useDispatch, useSelector } from 'react-redux'
 import {listSequence} from '../../actions/sequenceAction'
+import {useParams} from 'react-router-dom'
 
 const Sequence = () => {
     const [groupModal, setGroupModal] = useState(false)
@@ -14,23 +15,29 @@ const Sequence = () => {
     const [groupId, setGroupId] = useState(null)
     const [groupDays, setGroupsDays] = useState([])
     const dispatch = useDispatch()
+    const {id} = useParams()
     const {loading, error, groups} = useSelector(state => state.sequenceGroups)
     const {group} = useSelector(state => state.sequenceGroup)
     const {isRemoved} = useSelector(state => state.sequenceGroupRemoved)
 
     useEffect(() => {
-        dispatch(listSequence())
-    }, [dispatch, group, isRemoved])
+        dispatch(listSequence(id))
+    }, [dispatch, group, isRemoved, id])
+
     return (
         <>
             <GroupModal groupModal={groupModal} setGroupModal={setGroupModal}/>
+            
             <BlocksModal 
             blocksModal={blocksModal} 
             setBlocksModal={setBlocksModal}
             group={groupId}
             days={groupDays}/>
+
             <div className={style.sequence}>
+                
                 <div className={style.sequence__wrapper}>
+                    
                     <div className={style.schedule__create}
                     onClick={() => setGroupModal(true)}
                     title='create sequence group'>
@@ -38,6 +45,7 @@ const Sequence = () => {
                             <Icons name='plus-square' width='15' height='15' />
                         </div>
                     </div>
+                    
                     <div className={style.sequence__groups}>
                         {
                             loading ? <Loader size='25' center />

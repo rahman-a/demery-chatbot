@@ -8,6 +8,7 @@ import Loader from '../Loader'
 import Select from 'react-select'
 import { useSelector, useDispatch } from 'react-redux'
 import {createSequence} from '../../actions/sequenceAction'
+import { useParams } from 'react-router-dom'
 
 const options = [
     {label:'Saturday', value:'saturday'},
@@ -24,6 +25,7 @@ const GroupModal = ({groupModal, setGroupModal}) => {
     const [selectedDays, setSelectedDays] = useState([])
     const [formError, setFormError] = useState(null)
     const [successMsg, setSuccessMsg] = useState(null)
+    const {id} = useParams()
     const dispatch = useDispatch()
     const {group, loading, error} = useSelector(state => state.sequenceGroup)
     
@@ -34,7 +36,7 @@ const GroupModal = ({groupModal, setGroupModal}) => {
     
     const createSequenceGroup = _ => {
         const days = selectedDays.map(day => day.value)
-        const data = {...groupData, days}
+        const data = {...groupData, days, channel:id}
         if(!(data.title) || data['title'] === ''){
             setFormError('Please Write The Group Name')
             return 
@@ -83,7 +85,7 @@ const GroupModal = ({groupModal, setGroupModal}) => {
                     </Alert>
                 }
                 {
-                    loading && <Loader center size='10'/>
+                    loading && <Loader center size='8'/>
                 }
                  <Form style={{position:'relative'}}>
                     {/* <div className={style.sequence__overlay}></div> */}

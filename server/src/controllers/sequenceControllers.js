@@ -1,4 +1,5 @@
 import Sequence from "../models/sequenceModel.js";
+import TimedBlock from '../models/TimesBlocks.js'
 // import Block from "../models/blockModel.js"
 
 export const createNewSequence = async (req, res, next) => {
@@ -18,8 +19,9 @@ export const createNewSequence = async (req, res, next) => {
 }
 
 export const listSequenceGroups = async (req, res, next) => {
+    const {id} = req.params
     try {
-        const groups = await Sequence.find({})
+        const groups = await Sequence.find({channel:id})
         if(!groups || groups.length === 0){
             res.status(404)
             throw new Error('No Sequence Groups Found')
@@ -38,6 +40,7 @@ export const deleteSequenceGroup = async(req, res, next) => {
             res.status(404)
             throw new Error('No Group Found')
         }
+        await TimedBlock.deleteMany({group:group._id})
         await group.remove()
         res.status(204).send()
     } catch (error) {

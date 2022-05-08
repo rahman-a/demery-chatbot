@@ -13,21 +13,21 @@ export const createTimed = async (req, res, next) => {
         const block = await Block.findById(timedBlock.block)
         if(timedBlock.type === 'instant') {
             const userData = await extractUsersIds()
-            userData.forEach(user => {
+            for(let user of userData) {
                 if(isUsersSubscribedToChannel(user.channels, timedBlock.channel)) {
                     sendMessageToUserDialogue(timedBlock._id, user, timedBlock.channel)
                     sendNotificationToUserDevice(block, user.notificationToken)
                 }
-            })
+            }
         } else if(timedBlock.type === 'schedule') {
             cron.scheduleJob(timedBlock.date, async () => {
                 const userData = await extractUsersIds()
-                userData.forEach(user => {
-                if(isUsersSubscribedToChannel(user.channels, timedBlock.channel)) {
-                    sendMessageToUserDialogue(timedBlock._id, user, timedBlock.channel)
-                    sendNotificationToUserDevice(block, user.notificationToken)
+                for(let user of userData) {
+                    if(isUsersSubscribedToChannel(user.channels, timedBlock.channel)) {
+                        sendMessageToUserDialogue(timedBlock._id, user, timedBlock.channel)
+                        sendNotificationToUserDevice(block, user.notificationToken)
+                    }
                 }
-                })
             })
         }
         if(timedBlock.type === 'sequence'){
@@ -36,6 +36,7 @@ export const createTimed = async (req, res, next) => {
                     ...block._doc,
                     group:timedBlock.group,
                     day: timedBlock.day,
+                    order:timedBlock.order,
                     messageType:timedBlock.type,
                     isActive:timedBlock.isActive,
                     timedCreated:timedBlock.createdAt
@@ -66,15 +67,22 @@ export const listTimedBlocks = async(req, res,next) => {
         const blocks = await Promise.all(timedBlocks.map(async block => {
             const getBlock = await Block.findById(block.block)
             if(block.type === 'sequence'){
-                return {...getBlock._doc, 
-                    day:block.day, 
-                    group:block.group, 
+                return {
+                    ...getBlock._doc, 
+                    day:block.day,
+                    order:block.order,
+                    group:block.group,
                     messageType:block.type,
                     isActive: block.isActive,
                     timedCreated:block.createdAt
                 }
             } else {
-                return {...getBlock._doc, date:block.date, sent:!(block.isActive), messageType:block.type}
+                return {
+                    ...getBlock._doc, 
+                    date:block.date, 
+                    sent:!(block.isActiveForTest),
+                    messageType:block.type
+                }
             }
         }))
         res.send({blocks})
@@ -91,7 +99,6 @@ export const getTimedBlocks = async (req, res, next) => {
             isActiveForTest:true, 
             date:{$lt: new Date().toISOString()}
         })
-        console.log('timed', timedBlocks);
         if(!timedBlocks || timedBlocks.length === 0){
             res.status(404)
             throw new Error('No Blocks Found')
@@ -156,45 +163,129 @@ export const deleteTimedBlock = async(req, res, next) => {
 }
 
 // Run Daily to send Sequence message
-cron.scheduleJob('* 6 * * *', async () => {
+// cron.scheduleJob('* 16 * * *', async () => {
+    
+//     const today = getToday()
+    
+//     const timedBlocks = await TimedBlock.find({type:'sequence', day:today})
+    
+//     const user_data = await extractUsersIds()
+
+//     for(let timedBlock of timedBlocks) {
+        
+//         const block = await Block.findById(timedBlock.block)
+        
+//         const TimedBlocksWithSameGroupId = await TimedBlock.find({group: timedBlock.group})
+        
+//         const previousTimedBlocksIds = extractPreviousMessagesIds(TimedBlocksWithSameGroupId, today)
+        
+//         for(let user of user_data) {
+            
+//             if(!(timedBlock.ids.includes(user._id))) {
+                
+//                 if(isUsersSubscribedToChannel(user.channels, timedBlock.channel) 
+//                 && !isUserReceivedPreviousMessages(previousTimedBlocksIds, user._id)
+//                 && timedBlock.isActive) {
+                   
+//                     timedBlock.ids = timedBlock.ids.concat(user._id)
+                    
+//                     await timedBlock.save()
+                    
+//                     sendMessageToUserDialogue(timedBlock._id, user._id, timedBlock.channel)
+                    
+//                     sendNotificationToUserDevice(block, user.notificationToken)
+
+//                 }
+//             }
+//         }
+//     }
+
+// })
+
+
+cron.scheduleJob('*/1 * * * *', async () => {
     const today = getToday()
-    const timedBlocks = await TimedBlock.find({type:'sequence', day:today})
+    console.log(`cron run at ${new Date().toLocaleTimeString()} on ${today}`)
+ 
+    const groups = await Sequence.find({days:today}) 
+    // console.log(groups);
     const user_data = await extractUsersIds()
-    timedBlocks.forEach(async timedBlock => {
-        const block = await Block.findById(timedBlock.block)
-        const TimedBlocksWithSameGroupId = await TimedBlock.find({group: timedBlock.group})
-        const previousTimedBlocksIds = extractPreviousMessagesIds(TimedBlocksWithSameGroupId, today)
-        user_data.forEach( async user => {
-            if(!(timedBlock.ids.includes(user._id))) {
-                if(isUsersSubscribedToChannel(user.channels, timedBlock.channel) 
-                && !isUserReceivedPreviousMessages(previousTimedBlocksIds, user._id)
-                && timedBlock.isActive) {
-                    timedBlock.ids = timedBlock.ids.concat(user._id)
-                    await timedBlock.save()
-                    sendMessageToUserDialogue(timedBlock._id, user._id, timedBlock.channel)
-                    sendNotificationToUserDevice(block, user.notificationToken)
+    
+    // console.log({data:user_data});
+    
+    for(const group of groups) {
+        // console.log({group});
+        const TimedBlocksWithSameGroupId = await TimedBlock.find({group:group._id})
+        // console.log({TimedBlocksWithSameGroupId});
+        const TimedBlocksWithSameGroupIdAndDay = TimedBlocksWithSameGroupId.filter(block => block.day === today)
+        // console.log({TimedBlocksWithSameGroupIdAndDay});
+        for(const user of user_data) {
+            
+            const targetOrder = extractTargetOrder(TimedBlocksWithSameGroupIdAndDay, user._id)
+
+            if(targetOrder) {
+                
+                const previousTimedBlocksIds =  extractPreviousMessagesIds(TimedBlocksWithSameGroupId, targetOrder)        
+                
+                const timedBlock = await TimedBlock.findOne({group:group._id, order:targetOrder})
+                
+                if(isUsersSubscribedToChannel(user.channels, group.channel) && timedBlock.isActive) {
+                    if(targetOrder === 1) {
+                       await sendMessageToUser(timedBlock, user._id, user.notificationToken)
+                    } else if (isUserReceivedPreviousMessages(previousTimedBlocksIds, user._id)) {
+                       await sendMessageToUser(timedBlock, user._id, user.notificationToken)
+                    }
+                    
                 }
             }
-        })
-    })
-
+            
+        }
+    }
 })
 
+
+async function sendMessageToUser(block, id, token) {
+    
+    block.ids = block.ids.concat(id)             
+    
+    await block.save()
+
+    const message = await Block.findById(block.block)
+    
+    sendMessageToUserDialogue(block._id, id, block.channel)
+    
+    sendNotificationToUserDevice(message, token)
+}
 
 // Helper Function
 async function sendNotificationToUserDevice (block, token) {
     try {
+        // const payload = {
+        //     notification: {
+        //         title:block.title,
+        //         content:block.content,
+        //         sound:'default'
+        //     },
+        //     data:{
+        //         channelId:block.channel.toString(),
+        //         image:block.image
+        //     }
+        // }
+        // TO DO ==> NEED FOR TEST
         const payload = {
-            notification: {
-                title:block.name,
+            data: {
+                title:block.title,
                 content:block.content,
-                sound:'default'
+                image:`http://localhost:5000/api/uploads/${block.image}`,
+                channel_id:'FirebasePushNotificationChannel',
+                channelId:block.channel.toString()
             }
         }
         const option = {
             priority:'high'
         }
-        await adminFB.messaging().sendToDevice(token, payload, option)
+        console.log({token});
+        token && await adminFB.messaging().sendToDevice(token, payload, option)
     } catch (error) {
         throw new Error(error)
     }
@@ -210,32 +301,64 @@ async function extractUsersIds () {
     }))
 
     return user_data
-} 
+}
+
+function extractTargetOrder(blocks, id) {
+    let order = null
+    for(const block of blocks) {
+        if(!(block.ids.includes(id))) {
+            order = block.order 
+            break
+        }
+    }
+
+    return order
+}
 
 async function sendMessageToUserDialogue (blockId, user, channel) {
     const block = await TimedBlock.findById(blockId)
-    block.isActive = false
-    await block.save()
-    const newDialogue = new Dialogue({
-        channel,
-        user,
-        response:block.block
-    })
-    await newDialogue.save()
+    if(block) {
+        if(block.type !== 'sequence') {
+            block.isActive = false
+            await block.save()
+        }
+        const newDialogue = new Dialogue({
+            channel,
+            user,
+            response:block.block
+        })
+        await newDialogue.save()
+    }
 }
 
-function extractPreviousMessagesIds (blocks, today) {
-    const groupDays = blocks.map(block => block.day)
-    const prevDays = findPreviousDays(today, groupDays)
+function extractPreviousMessagesIds (blocks, order) {
     let blockIds = []
+   
     blocks.forEach(block => {
-        if(prevDays.includes(block.day)) {
+        if(block.order !== order && block.order < order) {
             blockIds = [...blockIds, ...block.ids]
         }
     })
-
     return blockIds
 }
+
+// function extractPreviousMessagesIds (blocks, today) {
+    
+//     const groupDays = blocks.map(block => block.day)
+    
+//     const prevDays = findPreviousDays(today, groupDays)
+    
+    
+//     let blockIds = []
+   
+//     blocks.forEach(block => {
+//         if(prevDays.includes(block.day)) {
+//             blockIds = [...blockIds, ...block.ids]
+//         }
+//     })
+
+//     return blockIds
+// }
 
 function isUsersSubscribedToChannel (channels, id) {
     if(channels.includes(id)) {
@@ -245,32 +368,34 @@ function isUsersSubscribedToChannel (channels, id) {
 }
 
 function isUserReceivedPreviousMessages(messageIds, userId) {
-    if(messageIds.includes(userId)) {
-        return true
+    for(const id of messageIds) {
+        if(id.toString() === userId.toString()) {
+            return true
+        }
     }
+
     return false
 }
 
-function findPreviousDays(today, groupDays) {
-    const weekDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
-    const indexOfToday = weekDays.indexOf(today)
-    const daysData = groupDays.map(day => {
-        return {
-            name:day,
-            index: weekDays.indexOf(day)
-        }
-    })
-    const prevDays = []
-    daysData.forEach(day => {
-        if(day.index < indexOfToday) prevDays.push(day.name)
-    })
+// function findPreviousDays(today, groupDays) {
+//     const weekDays = ['saturday', 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday']
+//     const indexOfToday = weekDays.indexOf(today)
+//     const daysData = groupDays.map(day => {
+//         return {
+//             name:day,
+//             index: weekDays.indexOf(day)
+//         }
+//     })
+//     const prevDays = []
+//     daysData.forEach(day => {
+//         if(day.index < indexOfToday) prevDays.push(day.name)
+//     })
 
-    return prevDays
-}
+//     return prevDays
+// }
 
 function getToday () {
     const weekDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
     const date = new Date().getDay()
     return weekDays[date] 
 }
-

@@ -10,7 +10,7 @@ import {
 import {isAuth} from '../middleware/auth.js'
 
 router.post('/new', isAuth, createNewSequence)
-router.get('/', isAuth, listSequenceGroups)
+router.get('/:id', isAuth, listSequenceGroups)
 router.delete('/:id', isAuth, deleteSequenceGroup)
 
 export default router

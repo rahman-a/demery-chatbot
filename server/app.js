@@ -27,7 +27,7 @@ connectDB()
 app.use(cors())
 app.use(express.json())
 app.use(morgan('dev'))
-app.use(helmet())
+// app.use(helmet())
 app.use(cookieParser())
 app.use('/api/writers', checkDashApiKey,writerRouter)
 app.use('/api/channels', checkDashApiKey,channelRouter)
@@ -37,12 +37,14 @@ app.use('/api/timed', checkDashApiKey,timedRouter)
 app.use('/api/sequence', checkDashApiKey, sequenceRouter)
 app.use('/api/users',checkUserApiKey, userRouter)
 app.use('/api/uploads', express.static(path.resolve(__dirname, './uploads')))
+
 if(process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, '../client/build')))
     app.get('*', (req, res) => {
         res.sendFile(path.resolve(__dirname, '../client/build/index.html'))
     })
 }
+
 app.use(notFound)
 app.use(errorHandler)
 

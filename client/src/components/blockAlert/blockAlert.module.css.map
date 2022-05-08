@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,MAAM,CAAC;EACH,QAAQ,EAAE,QAAQ;EAClB,MAAM,EAAE,IAAI;EACZ,KAAK,EAAE,IAAI;EACX,GAAG,EAAE,KAAK;EACV,IAAI,EAAC,CAAC;EACN,UAAU,EAAE,MAAM;EAClB,gBAAgB,EAAE,yBAAuB;EACzC,OAAO,EAAE,IAAI;EACb,aAAa,EAAE,MAAM;EACrB,OAAO,EAAE,IAAI;EACb,WAAW,EAAE,MAAM;EACnB,KAAK,EAAE,OAAO;EACd,UAAU,EAAE,oBAAoB;CACnC",
+    "sources": [
+        "blockAlert.module.scss"
+    ],
+    "names": [],
+    "file": "blockAlert.module.css"
+}

@@ -19,6 +19,7 @@ const Block = ({data, error, group}) => {
     useEffect(() => {
         setToggle(data.isActive)
     }, [data, tg_data])
+    
     return (
         error ? <p style={{color:'red'}}>{error}</p>
         :<div className={style.sequence__block}>

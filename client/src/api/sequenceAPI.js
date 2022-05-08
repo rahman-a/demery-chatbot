@@ -1,8 +1,8 @@
 import api from './init'
 
 const service = {
-    listAll() {
-        return api().get('/sequence')
+    listAll(id) {
+        return api().get(`/sequence/${id}`)
     },
     create(info){
         return api().post('/sequence/new', info)

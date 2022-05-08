@@ -1,0 +1,18 @@
+.alert {
+  position: absolute;
+  height: 4rem;
+  width: 100%;
+  top: -4rem;
+  left: 0;
+  visibility: hidden;
+  background-color: rgba(254, 233, 233, 0.92);
+  z-index: 9999;
+  border-radius: 1.4rem;
+  display: -ms-grid;
+  display: grid;
+  place-items: center;
+  color: #620404;
+  -webkit-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+}
+/*# sourceMappingURL=blockAlert.module.css.map */

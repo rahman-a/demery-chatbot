@@ -73,7 +73,7 @@ const BroadcastingBlock = ({
             }
             <div className={style.timedBlock__delete} style={{display:toggleDelete ?'grid' :'none'}}>
                 {(loading || loading_gr) 
-                ? <Loader size='15' center/>
+                ? <Loader size='8' center/>
                 :(error || error_gr)
                 && <Alert variant='danger'>{error || error_gr}</Alert>}
                 <div className={style.timedBlock__delete_btn}>

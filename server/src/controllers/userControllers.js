@@ -15,22 +15,25 @@ export const createNewUser = async(req, res, next) => {
     })
 
     try {
-        let isExist = await User.findOne({email})
+        let isExist = email && await User.findOne({email})
         if(isExist) {
             res.status(400)
             throw new Error('this E-mail already exist, please choose another E-mail Address')
         }
-        if(!isExist) {
+        if(!isExist && userName) {
             isExist = await User.findOne({userName})
             if(isExist) {
                 res.status(400)
                 throw new Error('this user name already exist, please choose another user name')
             }
         }
-       await newUser.save()
+       const user = await newUser.save()
+       const token = await user.generateToken()
         res.status(201).send({
             id:newUser._id,
             success:true,
+            token,
+            expiryAt:expireAt(7),
             message:'The Account has been created'
         })
     } catch (error) {
@@ -126,7 +129,7 @@ export const getAllUsers = async(req, res, next) => {
 
 export const userLogout = async(req, res, next) => {
     try {
-        req.user.tokens = req.user.tokens.filter(token => token.token !== req.token)
+        req.user.token = ''
         await req.user.save()
         res.clearCookie('token')
         res.send({
@@ -247,6 +250,7 @@ export const userDelete = async (req, res, next) => {
         }
         const userId = user._id
         await user.remove()
+        await Dialogue.deleteMany({user: userId})
         res.status(200).send({
             id:userId,
             success:true,
@@ -343,7 +347,7 @@ export const getUserDialogue = async (req, res, next) => {
             const block = await Block.findOne({role:'init', channel:channelId})
             if(!block) throw new Error('No Dialogues Found')
             if(req.isTrial) {
-                res.send({blocks:[block]})
+                res.send({success:true, blocks:[block]})
             }else {
                 const newDialogue  = new Dialogue({
                     channel:channelId,
@@ -370,6 +374,13 @@ export const getUserDialogue = async (req, res, next) => {
 export const getOneBlock = async (req, res, next) =>{
     const {blockId, channelId} = req.params 
     try {
+        if(req.isTrial) {
+            res.json({
+                success:false,
+                message:'This is Trial Version, please signup first'
+            })
+            return
+        }
         const block = await Block.findById(blockId)
         if(!block){
                 res.status(404)

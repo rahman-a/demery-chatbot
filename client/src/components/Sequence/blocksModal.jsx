@@ -35,7 +35,7 @@ const BlocksModal = ({blocksModal, setBlocksModal, group, days}) => {
     const timedDispatch = useTimedDispatch()
     const { blocks } = useSelector((state) => state.blocks)
     const {loading, error, blocks: allTimedBlocks} = useSelector(state => state.timedBlocks)
-    const {loading: add_loading,error: add_error,block,} = useSelector((state) => state.timedBlockAdded)
+    const {loading: add_loading,error: add_error, block} = useSelector((state) => state.timedBlockAdded)
     const {loading:tg_loading, error:tg_error, toggle} = useSelector(state => state.toggleBlock)
     const {loading:rm_loading, error:rm_error, isRemoved} = useSelector(state => state.timedBlockRemoved)
     const { timedBlocks } = useTimedState()
@@ -56,9 +56,15 @@ const BlocksModal = ({blocksModal, setBlocksModal, group, days}) => {
         setFilteredBlocks(filteredBlocks)
     }
 
-    
+    const defineBlockOrder = blocks => {
+        return blocks.map(block => block.order)
+                     .sort((a,b) => a - b)
+                     [blocks.length - 1] + 1 
+                     || 1
+    }
     
     const addTimedBlockHandler = (blockId) => {
+        console.log({timedBlocks});
         setCreateNew(false)
         setInputValue('')
         const info = {
@@ -66,18 +72,21 @@ const BlocksModal = ({blocksModal, setBlocksModal, group, days}) => {
           block: blockId,
           type: 'sequence',
           day:defineWeekDay(timedBlocks, days),
+          order:defineBlockOrder(timedBlocks),
           group
         }           
         dispatch(addTimedBlock(info))
     }
 
     const displayTimedBlocks = (_) => {
+        console.log({allTimedBlocks});
         timedDispatch({type: TIMED_BLOCKS_RESET})
         timedDispatch({ type: TIMED_BLOCKS_ADD, payload: allTimedBlocks })
         dispatch({ type: type.LIST_TIMED_BLOCK_RESET })
       }
     
       const displayOneTimedBlock = (_) => {
+        console.log({block});
         timedDispatch({ type: TIMED_BLOCKS_ADD, payload: block })
         dispatch({ type: type.ADD_TIMED_BLOCK_RESET })
         error && dispatch({ type: type.LIST_TIMED_BLOCK_RESET })
@@ -156,12 +165,12 @@ const BlocksModal = ({blocksModal, setBlocksModal, group, days}) => {
                 </div>
                 <div className={style.sequence__blocks}>
                     {
-                        loading ? <Loader size='20' center/>
+                        loading ? <Loader size='8' center/>
                         : error ? <h2 style={{left:'27%'}} className={style.sequence__error}>{error}</h2>
                         :timedBlocks && timedBlocks.map(block => <Block key={block._id} data={block} group={group}/>)
                     }
                     {add_loading ? (
-                        <Loader size='10' />
+                        <Loader size='5' />
                     ) : (
                     add_error && <Block error={add_error} />
                     )}
